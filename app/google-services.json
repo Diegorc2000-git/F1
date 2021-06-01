@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "206314664925",
+    "project_id": "molowsapp",
+    "storage_bucket": "molowsapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206314664925:android:3be095615e17c8f7933c34",
+        "android_client_info": {
+          "package_name": "com.example.molowsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206314664925-vr29oeme1n3tk19uuosnvt815onhjovc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANYsgX_T2qtBYGAP7ck2J6x7HpKqfzl6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "206314664925-vr29oeme1n3tk19uuosnvt815onhjovc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
