@@ -40,11 +40,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-database:20.0.0'
     implementation 'com.google.firebase:firebase-storage:20.0.0'
-    implementation 'com.google.firebase:firebase-messaging:17.1.0' //will update later
-    implementation 'com.google.firebase:firebase-messaging:22.0.0' //will update later
-
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
 
     //google sign in library
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
@@ -52,6 +48,10 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation 'com.android.volley:volley:1.2.0'
+
+    implementation 'com.google.code.gson:gson:2.8.7'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'

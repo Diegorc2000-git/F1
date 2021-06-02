@@ -60,7 +60,7 @@ public class ChatListFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerViewL);
 
         chatlistsList = new ArrayList<>();
 

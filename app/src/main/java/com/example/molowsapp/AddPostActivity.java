@@ -418,7 +418,7 @@ public class AddPostActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadData(String title, String description) {
+    private void uploadData(final String title, final String description) {
         pd.setMessage("Publishing post...");
         pd.show();
 
@@ -462,6 +462,8 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pDescr", description);
                                 hashMap.put("pImage", downloadUri);
                                 hashMap.put("pTime", timeStamp);
+                                hashMap.put("pLikes", "0");
+                                hashMap.put("pComments", "0");
 
                                 //path to store post data
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
@@ -513,6 +515,8 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pDescr", description);
             hashMap.put("pImage", "noImage");
             hashMap.put("pTime", timeStamp);
+            hashMap.put("pLikes", "0");
+            hashMap.put("pComments", "0");
 
             //path to store post data
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");

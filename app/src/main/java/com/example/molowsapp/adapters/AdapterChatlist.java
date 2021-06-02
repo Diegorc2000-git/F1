@@ -50,11 +50,11 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
         //set data
         myHolder.nameTv.setText(userName);
         if (lastMessage == null || lastMessage.equals("default")){
-            myHolder.lastMessage.setVisibility(View.GONE);
+            myHolder.lastMessageTv.setVisibility(View.GONE);
         }
         else{
-            myHolder.lastMessage.setVisibility(View.VISIBLE);
-            myHolder.lastMessage.setText(lastMessage);
+            myHolder.lastMessageTv.setVisibility(View.VISIBLE);
+            myHolder.lastMessageTv.setText(lastMessage);
         }
         try{
             Picasso.get().load(userImage).placeholder(R.drawable.ic_default_img).into(myHolder.profileIv);
@@ -98,7 +98,7 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
     class MyHolder extends RecyclerView.ViewHolder{
         //views of row_chatlist.xml
         ImageView profileIv, onlineStatusIv;
-        TextView nameTv, lastMessage;
+        TextView nameTv, lastMessageTv;
 
 
         public MyHolder(@NonNull View itemView) {
@@ -108,7 +108,7 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
             profileIv = itemView.findViewById(R.id.profileIv);
             onlineStatusIv = itemView.findViewById(R.id.onlineStatusIv);
             nameTv = itemView.findViewById(R.id.nameTv);
-            lastMessage = itemView.findViewById(R.id.lastMessageTv);
+            lastMessageTv = itemView.findViewById(R.id.lastMessageTv);
         }
     }
 

@@ -14,43 +14,58 @@
         android:background="@color/colorPrimaryDark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <!--Receiver profile picture-->
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileIv"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_default"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:orientation="horizontal">
+            <!--Receiver profile picture-->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profileIv"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default"/>
 
-            <!--Receiver name-->
-            <TextView
-                android:id="@+id/nameTv"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="His name"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:orientation="vertical"
+                android:gravity="center">
 
-            <!--Receiver status i.e. online or offline-->
-            <TextView
-                android:id="@+id/userStatusTv"
-                android:layout_width="match_parent"
+                <!--Receiver name-->
+                <TextView
+                    android:id="@+id/nameTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="His name"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <!--Receiver status i.e. online or offline-->
+                <TextView
+                    android:id="@+id/userStatusTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="online"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <!--Add icons to indicate blocked/unbloked-->
+            <ImageView
+                android:id="@+id/blockIv"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="online"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
+                android:src="@drawable/ic_unblocked_green"
+                android:layout_marginRight="5dp" />
 
         </LinearLayout>
-
 
     </androidx.appcompat.widget.Toolbar>
 

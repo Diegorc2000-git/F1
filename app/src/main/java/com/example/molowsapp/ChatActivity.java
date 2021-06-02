@@ -1,17 +1,30 @@
 package com.example.molowsapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,15 +34,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.molowsapp.adapters.AdapterChat;
+import com.example.molowsapp.adapters.AdapterUsers;
 import com.example.molowsapp.models.ModelChat;
 import com.example.molowsapp.models.ModelUser;
-import com.example.molowsapp.notifications.APIService;
-import com.example.molowsapp.notifications.Client;
 import com.example.molowsapp.notifications.Data;
-import com.example.molowsapp.notifications.Response;
 import com.example.molowsapp.notifications.Sender;
 import com.example.molowsapp.notifications.Token;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,17 +58,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -56,6 +84,7 @@ public class ChatActivity extends AppCompatActivity {
     Toolbar toolbar;
     RecyclerView recyclerView;
     CircleImageView profileIv;
+    ImageView blockIv;
     TextView nameTv, userStatusTv;
     EditText messageEt;
     ImageButton sendBtn;
@@ -77,8 +106,12 @@ public class ChatActivity extends AppCompatActivity {
     String myUid;
     String hisImage;
 
-    APIService apiService;
-    boolean notify = false;
+    boolean isBlocked = false;
+
+    //volley request queue for INotificationSideChannel
+    private RequestQueue requestQueue;
+
+    private boolean notify = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +128,9 @@ public class ChatActivity extends AppCompatActivity {
         userStatusTv = findViewById(R.id.userStatusTv);
         messageEt = findViewById(R.id.messageEt);
         sendBtn = findViewById(R.id.sendBtn);
+        blockIv = findViewById(R.id.blockIv);
+
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         //Layout (linearLayout) for RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -102,9 +138,6 @@ public class ChatActivity extends AppCompatActivity {
         //recyclerview properties
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        //create api service
-        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
 
         /*On click user from users list we have passed that user's UID using intent
         So get that uid here to get the profile picture, name and start chat with that user*/
@@ -213,10 +246,113 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        blockIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBlocked){
+                    unBlockUser();
+                }
+                else{
+                    blockUser();
+                }
+            }
+        });
+
         readMessages();
+
+        checkIsBlocked();
 
         seenMessage();
 
+    }
+
+    private void checkIsBlocked() {
+        //check each user, if blocked or not
+        //if uid of the user exist in "BlockedUsers" then that user is blocked, otherwise not
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
+        ref.child(firebaseAuth.getUid()).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            if (ds.exists()){
+                                blockIv.setImageResource(R.drawable.ic_blocked_red);
+                                isBlocked = true;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    private void blockUser() {
+        //block the user, by adding uid to current user's "BlockedUsers" node
+
+        //put values in hasmap to put in db
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", hisUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
+        ref.child(myUid).child("BlockedUsers").child(hisUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        //blocked successfully
+                        Toast.makeText(ChatActivity.this, "Bloked Successfully...", Toast.LENGTH_SHORT).show();
+                        blockIv.setImageResource(R.drawable.ic_blocked_red);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed to block
+                        Toast.makeText(ChatActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void unBlockUser() {
+        //unblock the user, by removing uid from current user's "BlockedUsers" node
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
+        ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            if (ds.exists()){
+                                //remove blocked user data from current user's BlocedUsers list
+                                ds.getRef().removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                //unblocked successfully
+                                                Toast.makeText(ChatActivity.this, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
+                                                blockIv.setImageResource(R.drawable.ic_unblocked_green);
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //failed to unblock
+                                                Toast.makeText(ChatActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 
     private void seenMessage() {
@@ -310,15 +446,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         //create chatlis node/child in firebase database
-        DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("Chatlist")
+        final DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("Chatlist")
                 .child(myUid)
                 .child(hisUid);
-
         chatRef1.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()){
-                    chatRef1.child("id").setValue(hisUid);
+                    chatRef1.child("id").setValue(myUid);
                 }
             }
 
@@ -328,15 +463,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("Chatlist")
+        final DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("Chatlist")
                 .child(hisUid)
                 .child(myUid);
-
         chatRef2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()){
-                    chatRef2.child("id").setValue(myUid);
+                    chatRef2.child("id").setValue(hisUid);
                 }
             }
 
@@ -358,21 +492,43 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     Token token = ds.getValue(Token.class);
-                    Data data = new Data(myUid, nombre+":"+message, "New Message", hisUid, R.drawable.ic_default_img);
+                    Data data = new Data(myUid, nombre+": "+message, "New Message", hisUid, R.drawable.ic_default_img);
 
                     Sender sender = new Sender(data, token.getToken());
-                    apiService.sendNotification(sender)
-                            .enqueue(new Callback<Response>() {
-                                @Override
-                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                                    Toast.makeText(ChatActivity.this, ""+response.message(), Toast.LENGTH_SHORT).show();
-                                }
 
-                                @Override
-                                public void onFailure(Call<Response> call, Throwable t) {
+                    //fcm json objetc request
+                    try{
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        //response of the request
+                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
+                            }
+                        }){
+                            @Nullable
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                //put params
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAAMAlP890:APA91bHpcHuYvztIGhRCNsiXINywLw3sPK7pDH9BEvuAsqVx-EM1mMESCve-uGrXMmEPZHUp1fisw0c5_vNCh6hFbmrRpYK6trYJeUA_2895xSfKVLcIYw10XVttZd-_IC2GQ08ijbeU");
 
-                                }
-                            });
+                                return headers;
+                            }
+                        };
+
+                        //add this request to queue
+                        requestQueue.add(jsonObjectRequest);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -464,43 +620,3 @@ public class ChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-/*
-//check until required info is received
-                for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    //get data
-                    String name = ""+ds.child("nombre").getValue();
-                    hisImage = ""+ds.child("imagen").getValue();
-                    String typingStatus = ""+ds.child("typingTo").getValue();
-
-                    //get value of onlineStatus
-                    String onlineStatus = ""+ds.child("onlineStatus").getValue();
-                    if (onlineStatus.equals("online")){
-                        userStatusTv.setText(onlineStatus);
-                    }
-                    else{
-                        //convert timestamp to proper time date
-                        //convert time stamp to dd/mm/yyyy hh:mm am/pm
-                        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-                        cal.setTimeInMillis(Long.parseLong(onlineStatus));
-                        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
-                        userStatusTv.setText("Last seen at: "+ dateTime);
-                        //add any time stamp to registerd users in firebase database manually
-                    }
-
-                    //check typing status
-                    if (typingStatus.equals(myUid)){
-                        userStatusTv.setText("typing");
-                    }
-
-                    //set data
-                    nameTv.setText(name);
-                    try{
-                        //image received, set it to imageview in tollbar
-                        Picasso.get().load(hisImage).placeholder(R.drawable.ic_default_white).into(profileIv);
-                    }
-                    catch (Exception e){
-                        //there is exception getting picture, set default picture
-                        Picasso.get().load(R.drawable.ic_default_white).into(profileIv);
-                    }
-                }
- */

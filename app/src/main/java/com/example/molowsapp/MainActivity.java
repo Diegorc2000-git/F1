@@ -43,6 +43,45 @@ public class MainActivity extends AppCompatActivity {
 }
 
 /*
+En esta PARTE 33;
+ - Cambiar la contraseña del usuario desde el editor del perfil
+
+En esta PARTE 32;
+ - Enseñaremos quien le ha dado like a tu anuncio
+ - Click en like de un anuncio para ver a quien le ha gustado
+
+En esta PARTE 31;
+ - Bloquearemos un usuario
+ - desbloquear un usuario
+ - El Usuario bloqueado no podra enviar mensajes a aquellos que haya bloqueado ese usuario
+
+En esta PARTE 29;
+ - Resolver errores: null me gustas null comentarios
+    No hemos asignado ningun valor a "pLikes y pComments" cuando añadimos una publicacion
+    Solucion: Añadir un valor inicial de likes y comentarios a 0
+
+ - Emviar Imagenes/photos por chat
+    Cambiar chat row y chatActivity UI
+    Mirar permisos de storage/camera
+    Escoger imagen de camara o galleria
+    Subir los datoa a firebase
+    Añadir otro valor a ModelChat i.e. "type"
+        Cuando el mensage sea texto, el tipo sera text
+        Cuando el mensage sea imagen, el tipo sera imagen
+
+En esta PARTE 28;
+ - ReCode FCM (chat notifications)
+    actualizaremos a su ultima version
+    usaremos Volley en vez de retrofit
+    Migraremos el proyecto a AndroidX
+        Librerias necesarias;
+        1) Volley
+        2) Google gson
+
+En esta PARTE 27;
+ - Compartir anuncio
+    tendremos que usar la clase FileProvider para compartir imagnes
+
 En esta PARTE 26;
  - Enseñar ChatList
     Nombre Usuario
