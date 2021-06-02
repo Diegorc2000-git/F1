@@ -1,4 +1,4 @@
-package com.example.molowsapp;
+package com.example.molowsapp.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebStorage;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,12 +37,17 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.molowsapp.AddPostActivity;
+import com.example.molowsapp.MainActivity;
+import com.example.molowsapp.R;
 import com.example.molowsapp.adapters.AdapterPosts;
 import com.example.molowsapp.models.ModelPost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -321,10 +327,11 @@ public class ProfileFragment extends Fragment {
         1) Edit Profile Picture
         2) Edit Cover Photo
         3) Edit Name
-        4) Edit Phone*/
+        4) Edit Phone
+        5) Change Password*/
 
         //options to show in dialog
-        String options[] = { "Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone"};
+        String options[] = { "Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone", "Change Password"};
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         //set Title
@@ -354,11 +361,95 @@ public class ProfileFragment extends Fragment {
                     //Edit Phone clicked
                     pd.setMessage("Update Phone");
                     showNamePhoneUpdateDialog("telefono");
+                }else if (which == 4){
+                    //Change Password clicked
+                    pd.setMessage("Chamging Password");
+                    showChangePasswordDialog();
                 }
             }
         });
         //create and show dialog
         builder.create().show();
+    }
+
+    private void showChangePasswordDialog() {
+    //password change dialog with custom layout having currentPasdword, new Password and update button
+        //inflate layout for dialog
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_update_password, null);
+
+        EditText passwordEt = view.findViewById(R.id.passwordEt);
+        EditText newPasswordEt = view.findViewById(R.id.newPasswordEt);
+        Button updatePasswordBtn = view.findViewById(R.id.updatePasswordBtn);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view); // set view to dialog
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        updatePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //validate data
+                String oldPassword = passwordEt.getText().toString().trim();
+                String newPassword = newPasswordEt.getText().toString().trim();
+                if (TextUtils.isEmpty(oldPassword)){
+                    Toast.makeText(getActivity(), "Enter your current password...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (newPassword.length()<6){
+                    Toast.makeText(getActivity(), "Password length must atleast 6 characters...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                dialog.dismiss();
+                updatePassword(oldPassword, newPassword);
+            }
+        });
+    }
+
+    private void updatePassword(String oldPassword, String newPassword) {
+        pd.show();
+
+        //get current user
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+
+        //before changing password re-authenticate the user
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+        user.reauthenticate(authCredential)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        //successfully autenticated, begin update
+
+                        user.updatePassword(newPassword)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        //password updated
+                                        pd.dismiss();
+                                        Toast.makeText(getActivity(), "Password Updated...", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        //failed updating password, show reason
+                                        pd.dismiss();
+                                        Toast.makeText(getActivity(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //authentication failed, show reason
+                        pd.dismiss();
+                        Toast.makeText(getActivity(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     private void showNamePhoneUpdateDialog(String key){
@@ -766,6 +857,9 @@ public class ProfileFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
+
+        //hide some options
+        menu.findItem(R.id.action_create_group).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.action_search);
         //v7 serachview to search user specific posts

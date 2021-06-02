@@ -232,6 +232,7 @@ public class ThereProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.findItem(R.id.action_add_post).setVisible(false); // hide add post from this activity
+        menu.findItem(R.id.action_create_group).setVisible(false); // hide action_create_group from this activity
 
         MenuItem item = menu.findItem(R.id.action_search);
         //v7 serachview to search user specific posts

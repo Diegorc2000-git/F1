@@ -8,8 +8,16 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.PopupMenu;
 
+import com.example.molowsapp.fragments.ChatListFragment;
+import com.example.molowsapp.fragments.GroupChatsFragment;
+import com.example.molowsapp.fragments.HomeFragment;
+import com.example.molowsapp.fragments.ProfileFragment;
+import com.example.molowsapp.fragments.UsersFragment;
 import com.example.molowsapp.notifications.Token;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +34,8 @@ public class DashboardActivity extends AppCompatActivity {
     ActionBar actionBar;
 
     String mUID;
+
+    private BottomNavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +49,7 @@ public class DashboardActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         //botom navigation
-        BottomNavigationView navigationView = findViewById(R.id.navigation);
+        navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
 
         //home fragment transaction(default, on start)
@@ -96,19 +106,56 @@ public class DashboardActivity extends AppCompatActivity {
                             ft3.replace(R.id.content, fragment3, "");
                             ft3.commit();
                             return true;
-                        case R.id.nav_chat:
+                        /*case R.id.nav_chat:
                             //users fragment transaction
                             actionBar.setTitle("Chat");//change actionbar title
                             ChatListFragment fragment4 = new ChatListFragment();
                             FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
                             ft4.replace(R.id.content, fragment4, "");
                             ft4.commit();
+                            return true;*/
+                        case R.id.nav_more:
+                            showMoreOptions();
                             return true;
                     }
 
                     return false;
                 }
             };
+
+    private void showMoreOptions() {
+        //popup menu to show more options
+        PopupMenu popupMenu = new PopupMenu(this, navigationView, Gravity.END);
+        //items to show in menu
+        popupMenu.getMenu().add(Menu.NONE, 0, 0, "Chat");
+        popupMenu.getMenu().add(Menu.NONE, 1, 0, "Group Chats");
+
+        //menu clicks
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == 0) {
+                    //Chat fragment transaction
+                    actionBar.setTitle("Chat");//change actionbar title
+                    ChatListFragment fragment4 = new ChatListFragment();
+                    FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+                    ft4.replace(R.id.content, fragment4, "");
+                    ft4.commit();
+                }
+                else if (id == 1){
+                    //Group Chats fragment transaction
+                    actionBar.setTitle("Group Chats");//change actionbar title
+                    GroupChatsFragment fragment5 = new GroupChatsFragment();
+                    FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+                    ft5.replace(R.id.content, fragment5, "");
+                    ft5.commit();
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
 
     private void checkUserStatus(){
         //get current user

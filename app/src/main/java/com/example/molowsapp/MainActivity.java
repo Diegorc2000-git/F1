@@ -43,6 +43,27 @@ public class MainActivity extends AppCompatActivity {
 }
 
 /*
+En esta PARTE 37;
+ - Añadiremos participantes
+ - enseñaremos el ultimo mensaje en el chat list
+
+En esta parte 36;
+    Enviar mensajes en el chat del Grupo
+    Enseñoar mensajes en el chat del Grupo
+
+En esta parte 35;
+ - Enseñar un listado de los grupos
+ Enseñar solo los grupos en los que estoy participando
+ Crear fragmento para enseñar grupos en recyclerview
+ BottomNavigationView soporta 5 opciones, asique moveremos other a un dialog
+
+En esta PARTE 34;
+ - Crear Grupo con los siguientes temas;
+    Icono de grupo (Optional)
+    Titulo de grupo (requerido)
+    Descripcion de grupo (Optional)
+ -Nota; Añadiremos al menu item en el toolbar/actionBar para abrir el activity para crear un grupo
+
 En esta PARTE 33;
  - Cambiar la contraseña del usuario desde el editor del perfil
 

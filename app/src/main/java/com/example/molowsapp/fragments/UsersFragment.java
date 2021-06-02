@@ -1,4 +1,4 @@
-package com.example.molowsapp;
+package com.example.molowsapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.example.molowsapp.GroupCreateActivity;
+import com.example.molowsapp.MainActivity;
+import com.example.molowsapp.R;
 import com.example.molowsapp.adapters.AdapterUsers;
 import com.example.molowsapp.models.ModelUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -226,6 +229,10 @@ public class UsersFragment extends Fragment {
         if (id == R.id.action_logout){
             firebaseAuth.signOut();
             checkUserStatus();
+        }
+        else if (id==R.id.action_create_group){
+            //go to GroupCreateActivity activity
+            startActivity(new Intent(getActivity(), GroupCreateActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

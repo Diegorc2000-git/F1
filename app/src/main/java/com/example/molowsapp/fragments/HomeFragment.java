@@ -1,4 +1,4 @@
-package com.example.molowsapp;
+package com.example.molowsapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +20,9 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.molowsapp.AddPostActivity;
+import com.example.molowsapp.MainActivity;
+import com.example.molowsapp.R;
 import com.example.molowsapp.adapters.AdapterPosts;
 import com.example.molowsapp.models.ModelPost;
 import com.google.firebase.auth.FirebaseAuth;
@@ -156,6 +159,9 @@ public class HomeFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
+
+        //hide some options
+        menu.findItem(R.id.action_create_group).setVisible(false);
 
         //searchview to seach posts by post title/description
         MenuItem item = menu.findItem(R.id.action_search);
