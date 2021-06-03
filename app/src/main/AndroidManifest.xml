@@ -8,9 +8,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_app_round"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
         <activity android:name=".SplashActivity">
@@ -36,7 +36,16 @@
 
         </activity>
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".teams.DatosActivityEscuderia" />
+        <activity
+            android:name=".teams.CochesActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".circuits.DatosActivityRacing" />
+        <activity
+            android:name=".circuits.RacingActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".MainActivity" />
+
 
         <service
             android:name=".notifications.FirebaseService"

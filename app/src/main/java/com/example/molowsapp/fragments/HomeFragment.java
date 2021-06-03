@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 //in case of error
-                Toast.makeText(getActivity(), ""+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), ""+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -162,6 +162,8 @@ public class HomeFragment extends Fragment {
 
         //hide some options
         menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
+
 
         //searchview to seach posts by post title/description
         MenuItem item = menu.findItem(R.id.action_search);

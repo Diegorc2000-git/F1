@@ -550,7 +550,7 @@ public class AddPostActivity extends AppCompatActivity {
     private void showImagePickDialog() {
 
         //options(camera, gallery) to show in dialog
-        String[] options = {"Camera", "Gallery"};
+        String[] options = {"Gallery"};
 
         //dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -560,7 +560,7 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //item click handle
-                if (which == 0){
+               /* if (which == 0){
                     //camera clicked
                     if (!checksCameraPermission()) {
                         requestCameraPermission();
@@ -568,7 +568,8 @@ public class AddPostActivity extends AppCompatActivity {
                     else{
                         pickFromCamera();
                     }
-                }if (which == 1){
+                }*/
+                if (which == 0){
                     //camera clicked
                     if (!checksStoragePermission()) {
                         requestStoragePermission();
@@ -600,7 +601,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         Intent intent = new Intent();
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        //startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
     private boolean checksStoragePermission(){
@@ -669,6 +670,9 @@ public class AddPostActivity extends AppCompatActivity {
 
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 

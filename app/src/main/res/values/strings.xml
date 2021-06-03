@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MolowsApp</string>
+    <string name="app_name">Formula One</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -79,6 +79,20 @@
     <!--Row users-->
     <string name="nameTv">Person Name</string>
     <string name="emailTv">Person Email</string>
+
+    <!--CochesActivity-->
+    <string name="btn_pilots">PILOTS</string>
+    <string name="btn_news">NEWS</string>
+    <string name="btn_circuits">CIRCUITS</string>
+
+    <!--Escuderias_adapter y Circuitos_item_layout-->
+    <string name="test">Test</string>
+
+    <!--CircuitosActivity-->
+    <string name="btn_team">Teams</string>
+
+    <!-- -->
+
 
     <!-- -->
 

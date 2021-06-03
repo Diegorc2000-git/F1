@@ -19,6 +19,7 @@ import com.example.molowsapp.fragments.HomeFragment;
 import com.example.molowsapp.fragments.ProfileFragment;
 import com.example.molowsapp.fragments.UsersFragment;
 import com.example.molowsapp.notifications.Token;
+import com.example.molowsapp.teams.CochesActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -106,14 +107,11 @@ public class DashboardActivity extends AppCompatActivity {
                             ft3.replace(R.id.content, fragment3, "");
                             ft3.commit();
                             return true;
-                        /*case R.id.nav_chat:
+                        case R.id.nav_info:
                             //users fragment transaction
-                            actionBar.setTitle("Chat");//change actionbar title
-                            ChatListFragment fragment4 = new ChatListFragment();
-                            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
-                            ft4.replace(R.id.content, fragment4, "");
-                            ft4.commit();
-                            return true;*/
+                            actionBar.setTitle("Information");//change actionbar title
+                            startActivity(new Intent(DashboardActivity.this, CochesActivity.class));
+                            return true;
                         case R.id.nav_more:
                             showMoreOptions();
                             return true;
