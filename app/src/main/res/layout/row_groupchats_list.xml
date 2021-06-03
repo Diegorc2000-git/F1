@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardBackgroundColor="@color/colorWhite"
+    app:cardBackgroundColor="@color/secondaryColor"
     app:contentPadding="3dp"
     android:layout_marginTop="1dp">
 
@@ -15,17 +15,17 @@
             android:id="@+id/groupIconIv"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/ic_group_primary"/>
+            android:src="@drawable/ic_default_img"/>
 
         <TextView
             android:id="@+id/groupTitleTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Group Title"
+            android:text="@string/group_titles"
             android:layout_toEndOf="@+id/groupIconIv"
             android:textSize="18sp"
-            android:textColor="@color/colorBlack"/>
+            android:textColor="@color/primaryTextColor"/>
 
         <TextView
             android:id="@+id/nameTv"
@@ -34,8 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="Sender Name"
-            android:textColor="@color/colorBlack"/>
+            android:text="@string/sender_name"
+            android:textColor="@color/primaryTextColor"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:id="@+id/messageTv"
             android:layout_below="@+id/groupTitleTv"
             android:layout_toEndOf="@id/nameTv"
-            android:text="The message"
+            android:text="@string/the_messages"
             android:textColor="#666262"
             android:layout_marginStart="5dp"
             android:singleLine="true"/>
@@ -55,7 +55,7 @@
             android:layout_below="@+id/nameTv"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
-            android:text="12:12 PM"
+            android:text="@string/_12_12_pm"
             android:singleLine="true"
             android:textColor="#666262"/>
 

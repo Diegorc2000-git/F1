@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    android:background="#eeee"
+    android:background="@color/primaryTextColor"
     tools:context=".GroupCreateActivity">
 
     <!--ImageView: Group Icon image (Pick/Display)-->
@@ -14,19 +14,18 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/groupIconIv"
-        android:src="@drawable/ic_group_primary"/>
+        android:src="@drawable/ic_add_white"/>
 
     <!--EditText: Group Titlte-->
     <EditText
         android:id="@+id/groupTitleEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#eeee"
         android:layout_below="@+id/groupIconIv"
         android:layout_marginTop="10dp"
         android:padding="10dp"
-        android:hint="Group Title"
-        android:textColor="@color/colorBlack"/>
+        android:hint="@string/group_title"
+        android:textColor="@color/secondaryColor"/>
 
     <!--EditText: Group Description-->
     <EditText
@@ -36,21 +35,20 @@
         android:inputType="textMultiLine|textCapSentences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#eeee"
         android:layout_below="@+id/groupTitleEt"
         android:layout_marginTop="10dp"
         android:padding="10dp"
-        android:hint="Group Description"
-        android:textColor="@color/colorBlack"/>
+        android:hint="@string/group_description"
+        android:textColor="@color/secondaryColor"/>
 
     <!--FAB: Create Group-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/createGroupBtn"
+        android:backgroundTint="@color/primaryLightColor"
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_done_white"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

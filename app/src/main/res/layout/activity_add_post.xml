@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="15dp"
     tools:context=".AddPostActivity">
 
     <LinearLayout
@@ -16,7 +17,7 @@
         <EditText
             android:id="@+id/pTitleEt"
             android:padding="10dp"
-            android:hint="Enter title"
+            android:hint="@string/enter_title"
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -24,7 +25,7 @@
         <!--ImageView: Input post image-->
         <ImageView
             android:id="@+id/pImageIv"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/ic_add_white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="200dp"/>
@@ -33,7 +34,7 @@
         <EditText
             android:id="@+id/pDescriptionEt"
             android:padding="10dp"
-            android:hint="Enter descripcion"
+            android:hint="@string/enter_descripcion"
             android:inputType="textCapSentences|textMultiLine"
             android:minHeight="120dp"
             android:gravity="start"
@@ -43,10 +44,11 @@
         <!--Button: Publish post to firbease-->
         <Button
             android:id="@+id/pUploadBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:text="Upload"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
+            android:background="@drawable/button_round_red"
+            android:text="@string/upload"
+            android:padding="15dp"
+            android:layout_gravity="center"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

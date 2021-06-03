@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,24 +10,25 @@
     <ImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:src="@drawable/ic_logo"
+        android:src="@drawable/logo_pantalla"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"/>
 
     <Button
         android:id="@+id/register_btn"
-        android:text="Register"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:text="@string/register"
+        android:background="@drawable/button_round_red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/login_btn"/>
 
     <Button
         android:id="@+id/login_btn"
-        android:text="Login"
+        android:text="@string/login"
+        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="100dp"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/button_round_red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

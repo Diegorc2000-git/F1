@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="1dp"
-    app:cardBackgroundColor="@color/colorWhite">
+    app:cardBackgroundColor="@color/secondaryColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,14 +16,13 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
             android:src="@drawable/ic_default_img"/>
 
         <TextView
             android:id="@+id/nameTv"
-            android:layout_toRightOf="@+id/avatarIv"
-            android:text="Atif"
-            android:textColor="@color/colorBlack"
+            android:layout_toEndOf="@+id/avatarIv"
+            android:text="@string/diego"
+            android:textColor="@color/primaryTextColor"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_width="match_parent"
@@ -35,19 +34,19 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/nameTv"
             android:layout_toEndOf="@+id/avatarIv"
-            android:text="This is actual comment"
-            android:layout_toRightOf="@+id/avatarIv"
-            android:textColor="@color/colorBlack"/>
+            android:text="@string/this_is_actual_comment"
+            android:textColor="@color/primaryTextColor"/>
 
         <TextView
             android:id="@+id/timeTv"
-            android:text="12/06/2019"
+            android:text="@string/_12_06_2019"
             android:layout_below="@+id/commentTv"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/primaryTextColor"
+            android:layout_alignParentEnd="true"
+            android:textAlignment="textEnd"
             android:layout_toEndOf="@id/avatarIv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/avatarIv" />
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

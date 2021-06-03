@@ -2,4 +2,84 @@
     <string name="app_name">MolowsApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Main Activity-->
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+
+    <!--Register Activity-->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="already_have_account_login">Already have account? Login</string>
+
+    <!--Login Activity-->
+    <string name="forgot_password_recover">Forgot Password? Recover</string>
+    <string name="not_have_account_register">Not have account? Register</string>
+
+    <!--AddPostActivity-->
+    <string name="enter_title">Enter title</string>
+    <string name="enter_descripcion">Enter descripcion</string>
+    <string name="upload">Upload</string>
+
+    <!--ChatActivity-->
+    <string name="start_typing">Start typing</string>
+
+    <!--GroupChatActivity-->
+    <string name="groupe_title">Groupe title</string>
+    <string name="start_typing_message">Start typing....</string>
+
+    <!--GroupCreateActivity-->
+    <string name="group_title">Group Title</string>
+    <string name="group_description">Group Description</string>
+
+    <!--PostDetailActivity-->
+    <string name="name">Name</string>
+    <string name="_33_min">33 min</string>
+    <string name="title">Title</string>
+    <string name="the_description_of_the_post">The description of the post</string>
+    <string name="_1_2k_likes">1.2k likes</string>
+    <string name="_1_2k_comments">1.2k Comments</string>
+    <string name="like">LIKE</string>
+    <string name="share">Share</string>
+    <string name="comment">Comment</string>
+    <string name="enter_comment">Enter comment…</string>
+
+    <!--Row Chat Left and Right-->
+    <string name="his_message">His Message</string>
+    <string name="_02_03_2019_05_59pm">02/03/2019 05:59PM</string>
+    <string name="delivered">delivered</string>
+
+    <!--Row Comments-->
+    <string name="diego">Diego</string>
+    <string name="this_is_actual_comment">This is actual comment</string>
+    <string name="_12_06_2019">12/06/2019</string>
+
+    <!--Row Group Chat Left and Right-->
+    <string name="names">Name</string>
+    <string name="the_message">The message</string>
+    <string name="time">Time</string>
+
+    <!--Row Group Chat List-->
+    <string name="group_titles">Group Title</string>
+    <string name="sender_name">Sender Name</string>
+    <string name="the_messages">The message</string>
+    <string name="_12_12_pm">12:12 PM</string>
+
+    <!--Row Posts-->
+    <string name="uNameTv">Name</string>
+    <string name="pTimeTv">33 min</string>
+    <string name="pTitleTv">Title</string>
+    <string name="pDescriptionTv">The description of the post</string>
+    <string name="pLikesTv">1.2k likes</string>
+    <string name="pCommentsTv">1.2k Comments</string>
+    <string name="likeBtn">LIKE</string>
+    <string name="commentBtn">Comment</string>
+    <string name="shareBtn">Share</string>
+
+    <!--Row users-->
+    <string name="nameTv">Person Name</string>
+    <string name="emailTv">Person Email</string>
+
+    <!-- -->
+
 </resources>

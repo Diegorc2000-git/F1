@@ -11,11 +11,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:textAlignment="center"
         android:gravity="center_horizontal"
-        android:text="Login"
-        android:textColor="@color/colorBlack"
-        android:textSize="25sp"/>
+        android:text="@string/login"
+        android:textColor="@color/secondaryColor"
+        android:textSize="32sp"/>
 
     <!--TextView: Label Email-->
     <com.google.android.material.textfield.TextInputLayout
@@ -28,7 +29,7 @@
         <EditText
             android:id="@+id/emailEt"
             android:inputType="textEmailAddress"
-            android:hint="Email"
+            android:hint="@string/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -47,7 +48,7 @@
         <EditText
             android:id="@+id/passwordEt"
             android:inputType="textPassword"
-            android:hint="Password"
+            android:hint="@string/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -56,29 +57,31 @@
     <!--TextView: Register User-->
     <Button
         android:id="@+id/loginBtn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
+        android:background="@drawable/button_round_grey"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordTIL"
         android:layout_centerHorizontal="true"
-        android:drawableLeft="@drawable/ic_llave"
-        android:drawablePadding="5dp"
-        android:text="Login"/>
+        android:drawableStart="@drawable/ic_llave"
+        android:drawablePadding="20dp"
+        android:text="@string/login"/>
 
     <!--TextView: show dialog to recover password-->
     <TextView
         android:id="@+id/recoverPassTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:gravity="center_horizontal"
-        android:text="Forgot Password? Recover"
+        android:text="@string/forgot_password_recover"
         android:layout_below="@id/loginBtn"
-        android:textColor="@color/colorBlack"/>
+        android:textColor="@color/secondaryColor"/>
 
     <!--GoogleSignInBtn: Sign in with google account-->
     <com.google.android.gms.common.SignInButton
         android:id="@+id/googleLoginBtn"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -91,12 +94,12 @@
         android:id="@+id/nothave_accountTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Not have account? Register"
+        android:text="@string/not_have_account_register"
         android:textAlignment="center"
         android:gravity="center_horizontal"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="30dp"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/secondaryColor"
         android:layout_marginBottom="20dp"/>
 
 </RelativeLayout>

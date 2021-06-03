@@ -19,7 +19,7 @@
                 android:id="@+id/coverIv"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/secondaryDarkColor"
                 android:scaleType="fitXY">
 
             </ImageView>
@@ -34,12 +34,11 @@
                 <ImageView
                     android:id="@+id/avatarIv"
                     android:layout_marginStart="20dp"
-                    android:background="@color/colorPrimary"
+                    android:background="@color/primaryTextColor"
                     android:padding="5dp"
                     android:src="@drawable/ic_default_white"
                     android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginLeft="20dp"/>
+                    android:layout_height="120dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,24 +53,21 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:textSize="25sp"
-                        android:textColor="@color/colorWhite"
-                        android:layout_marginLeft="5dp"/>
+                        android:textColor="@color/secondaryColor" />
 
                     <TextView
                         android:id="@+id/emailTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:textColor="@color/colorWhite"
-                        android:layout_marginLeft="5dp"/>
+                        android:textColor="@color/secondaryColor" />
 
                     <TextView
                         android:id="@+id/phoneTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:textColor="@color/colorWhite"
-                        android:layout_marginLeft="5dp"/>
+                        android:textColor="@color/secondaryColor" />
 
                 </LinearLayout>
 
@@ -92,6 +88,7 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:src="@drawable/ic_edit_white"
+        android:theme="@style/AppThemeNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

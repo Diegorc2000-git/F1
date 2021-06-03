@@ -9,11 +9,11 @@
 
     <TextView
         android:id="@+id/nameTv"
-        android:text="Name"
+        android:text="@string/names"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/primaryTextColor"
         android:textStyle="bold"/>
 
     <TextView
@@ -24,18 +24,18 @@
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="The message"
-        android:textColor="@color/colorBlack"/>
+        android:text="@string/the_message"
+        android:textColor="@color/secondaryDark"/>
 
     <TextView
         android:id="@+id/timeTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:text="Time"
+        android:text="@string/time"
         android:layout_below="@id/messageTv"
         android:layout_marginEnd="5dp"
         android:textSize="12sp"
-        android:textColor="@color/colorBlack"/>
+        android:textColor="@color/secondaryDark"/>
 
 </RelativeLayout>

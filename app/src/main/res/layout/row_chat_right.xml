@@ -25,47 +25,20 @@
             android:id="@+id/timeTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="02/03/2019 05:59PM"
-            android:textColor="@color/colorBlack"
+            android:text="@string/_02_03_2019_05_59pm"
+            android:textColor="@color/primaryTextColor"
             android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/messageTv"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/secondaryColor"
             android:background="@drawable/bg_sender"
             android:padding="15dp"
-            android:text="His Message"
-            android:layout_width="wrap_content"
+            android:text="@string/his_message"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"/>
-
-        <!--imagen error no sirve-->
-        <!--<TextView
-            android:id="@+id/messageTv"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/bg_sender"
-            android:padding="15dp"
-            android:text="His Message"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@id/timeTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/timeTv"
-            android:layout_alignParentRight="true" />
-
-        <ImageView
-             android:id="@+id/messageIv"
-             android:layout_width="200dp"
-             android:layout_height="200dp"
-             android:adjustViewBounds="true"
-             android:layout_alignParentEnd="true"
-             android:padding="15dp"
-             android:src="@drawable/ic_image_black"
-             android:scaleType="fitCenter"
-             android:background="@drawable/bg_sender"
-             android:layout_alignParentRight="true" />-->
 
     </LinearLayout>
 
@@ -75,6 +48,6 @@
         android:id="@+id/isSeentTv"
         android:gravity="end"
         android:textAlignment="textEnd"
-        android:text="delivered"/>
+        android:text="@string/delivered"/>
 
 </LinearLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:background="@color/secondaryColor"
     tools:context=".PostDetailActivity">
 
     <androidx.core.widget.NestedScrollView
@@ -25,7 +25,7 @@
                 app:cardElevation="3dp"
                 app:contentPadding="5dp"
                 app:cardUseCompatPadding="true"
-                app:cardBackgroundColor="@color/colorWhite">
+                app:cardBackgroundColor="@color/secondaryColor">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,16 +54,16 @@
 
                             <TextView
                                 android:id="@+id/uNameTv"
-                                android:text="Name"
-                                android:textColor="@color/colorBlack"
+                                android:text="@string/name"
+                                android:textColor="@color/primaryTextColor"
                                 android:textSize="20sp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
 
                             <TextView
                                 android:id="@+id/pTimeTv"
-                                android:text="33 min"
-                                android:textColor="@color/colorBlack"
+                                android:text="@string/_33_min"
+                                android:textColor="@color/primaryTextColor"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
 
@@ -84,14 +84,14 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorBlack"
-                        android:text="Title"
+                        android:textColor="@color/primaryTextColor"
+                        android:text="@string/title"
                         android:autoLink="all"/>
 
                     <TextView
                         android:id="@+id/pDescriptionTv"
-                        android:text="The description of the post"
-                        android:textColor="@color/colorBlack"
+                        android:text="@string/the_description_of_the_post"
+                        android:textColor="@color/primaryTextColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autoLink="all"/>
@@ -100,7 +100,7 @@
                         android:id="@+id/pImageIv"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:background="@color/colorWhite" />
+                        android:background="@color/secondaryColor" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -109,18 +109,18 @@
 
                         <TextView
                             android:id="@+id/pLikesTv"
-                            android:text="1.2k likes"
+                            android:text="@string/_1_2k_likes"
                             android:layout_weight="1"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primaryColor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
                         <TextView
                             android:id="@+id/pCommentsTv"
-                            android:text="1.2k Comments"
+                            android:text="@string/_1_2k_comments"
                             android:layout_weight="1"
                             android:textAlignment="textEnd"
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/primaryColor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="end" />
@@ -143,28 +143,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="LIKE"
-                            android:drawableLeft="@drawable/ic_like_black"
+                            android:text="@string/like"
                             android:drawablePadding="5dp"
                             android:drawableStart="@drawable/ic_like_black" />
-
-                        <!--<Button
-                            android:id="@+id/commentBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Comment"
-                            android:drawableLeft="@drawable/ic_comment_black"
-                            android:drawablePadding="5dp"
-                            android:drawableStart="@drawable/ic_comment_black" />-->
 
                         <Button
                             android:id="@+id/shareBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Share"
-                            android:drawableLeft="@drawable/ic_share_black"
+                            android:text="@string/share"
                             android:drawablePadding="5dp"
                             android:drawableStart="@drawable/ic_share_black" />
 
@@ -176,14 +164,14 @@
 
             <!--List of comments here: will do in next part-->
             <TextView
-                android:text="Comment"
-                android:textColor="@color/colorBlack"
+                android:text="@string/comment"
+                android:textColor="@color/primaryTextColor"
                 android:drawablePadding="5dp"
                 android:padding="2dp"
-                android:drawableStart="@drawable/ic_comment_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_comment_black"/>
+                app:drawableStartCompat="@drawable/ic_comment_black"
+                app:drawableLeftCompat="@drawable/ic_comment_black" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -211,23 +199,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/cAvatarIv"
-            android:background="@color/colorBlack"
             android:padding="10dp"
-            android:hint="Enter comment..."
+            android:hint="@string/enter_comment"
+            android:textColorHint="@color/secondaryDark"
+            android:textColor="@color/primaryTextColor"
             android:inputType="textCapSentences|textMultiLine"
             android:layout_centerVertical="true"
-            android:layout_margin="1dp"
-            android:layout_toRightOf="@+id/cAvatarIv"/>
+            android:layout_margin="1dp" />
 
         <ImageButton
             android:id="@+id/senBtnC"
             android:layout_alignParentEnd="true"
             android:src="@drawable/ic_send_black"
             android:layout_centerVertical="true"
-            android:background="@color/colorBlack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"/>
+            android:background="@color/secondaryColor"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
 
     </RelativeLayout>
 

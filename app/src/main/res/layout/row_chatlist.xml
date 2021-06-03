@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite">
+        android:background="@color/secondaryColor">
 
         <!--ImageView: User Profile Image-->
         <de.hdodenhof.circleimageview.CircleImageView
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="His name"
             android:layout_marginStart="4dp"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/primaryTextColor"
             android:textSize="18sp"
             android:layout_toEndOf="@+id/profileIv"
             android:layout_toRightOf="@+id/profileIv"
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="The last message"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/primaryTextColor"
             android:maxLines="2"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/profileIv"
