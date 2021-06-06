@@ -23,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="150dp"
         android:layout_marginLeft="150dp"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="300dp"
         android:layout_below="@id/ivLogoF1"
         app:lottie_imageAssetsFolder="assets"
         app:lottie_fileName="cargando.json"

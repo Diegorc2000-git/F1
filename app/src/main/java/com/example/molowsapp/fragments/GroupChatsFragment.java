@@ -43,13 +43,11 @@ public class GroupChatsFragment extends Fragment {
     private AdapterGroupChatList adapterGroupChatList;
 
     public GroupChatsFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group_chats, container, false);
 
         groupsRv = view.findViewById(R.id.groupsRv);
@@ -63,13 +61,13 @@ public class GroupChatsFragment extends Fragment {
 
     private void loadGroupChatList() {
         groupChatLists = new ArrayList<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 groupChatLists.clear();
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    //if current user's uid exists in participant list of group then show that group
                     if (ds.child("Participants").child(firebaseAuth.getUid()).exists()){
                         ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                         groupChatLists.add(model);
@@ -86,18 +84,17 @@ public class GroupChatsFragment extends Fragment {
         });
     }
 
-    private void searchGroupChatList(String query) {
+    private void searchGroupChatList(final String query) {
         groupChatLists = new ArrayList<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Groups");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 groupChatLists.clear();
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    //if current user's uid exists in participant list of group then show that group
                     if (ds.child("Participants").child(firebaseAuth.getUid()).exists()){
 
-                        //search by group title
                         if (ds.child("groupTitle").toString().toLowerCase().contains(query.toLowerCase())){
                             ModelGroupChatList model = ds.getValue(ModelGroupChatList.class);
                             groupChatLists.add(model);
@@ -117,36 +114,29 @@ public class GroupChatsFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true); // to show menu option in fragment
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
-    /*inflate option menu*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)  {
-        //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
 
-        //hide addpost icon from this fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
 
-        //SearchView
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
-        //search listener
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //called when user press search button from keyboard
-                //if search query is not empty then search
                 if (!TextUtils.isEmpty(s.trim())){
-                    //search text contains text, search it
                     searchGroupChatList(s);
                 }
                 else{
-                    //search text empty, get all users
                     loadGroupChatList();
                 }
                 return false;
@@ -154,14 +144,10 @@ public class GroupChatsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //called whenever user press any single letter
-                //if search query is not empty then search
                 if (!TextUtils.isEmpty(s.trim())){
-                    //search text contains text, search it
                     searchGroupChatList(s);
                 }
                 else{
-                    //search text empty, get all users
                     loadGroupChatList();
                 }
                 return false;
@@ -170,17 +156,14 @@ public class GroupChatsFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*handle menu item clicks*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout){
             firebaseAuth.signOut();
             checkUserStatus();
         }
         else if (id==R.id.action_create_group){
-            //go to GroupCreateActivity activity
             startActivity(new Intent(getActivity(), GroupCreateActivity.class));
         }
 
@@ -190,7 +173,6 @@ public class GroupChatsFragment extends Fragment {
     private void checkUserStatus() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user==null){
-            //user not signed in, go to main Activity
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
         }

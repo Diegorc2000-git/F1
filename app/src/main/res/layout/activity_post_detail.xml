@@ -49,6 +49,7 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:padding="10dp"
                             android:orientation="vertical"
                             android:layout_weight="1">
 
@@ -82,8 +83,10 @@
                         android:id="@+id/pTitleTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
+                        android:textSize="24sp"
                         android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:padding="5dp"
                         android:textColor="@color/primaryTextColor"
                         android:text="@string/title"
                         android:autoLink="all"/>
@@ -92,6 +95,7 @@
                         android:id="@+id/pDescriptionTv"
                         android:text="@string/the_description_of_the_post"
                         android:textColor="@color/primaryTextColor"
+                        android:padding="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autoLink="all"/>
@@ -99,6 +103,7 @@
                     <ImageView
                         android:id="@+id/pImageIv"
                         android:layout_width="match_parent"
+                        android:padding="5dp"
                         android:layout_height="200dp"
                         android:background="@color/secondaryColor" />
 
@@ -130,7 +135,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#F5F0F0"/><!--minuto 44:23-->
+                        android:background="#F5F0F0"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"

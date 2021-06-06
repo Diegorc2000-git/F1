@@ -41,44 +41,33 @@ public class UsersFragment extends Fragment {
     AdapterUsers adapterUsers;
     List<ModelUser> userList;
 
-    //firebase auth
     FirebaseAuth firebaseAuth;
 
     public UsersFragment() {
-        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_users, container, false);
 
-        //init
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //init recyclerview
         recyclerView = view.findViewById(R.id.users_recyclerView);
-        //set it's properties
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        //init user list
         userList = new ArrayList<>();
 
-        //getAll users
         getAllUsers();
 
         return view;
     }
 
     private void getAllUsers(){
-        //get current user
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        //get path of database named "Users" containing users info
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
-        //get all data from path
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -86,14 +75,11 @@ public class UsersFragment extends Fragment {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     ModelUser modelUser = ds.getValue(ModelUser.class);
 
-                    //get all users except currently signed in user
                     if (!modelUser.getUid().equals(fUser.getUid())){
                         userList.add(modelUser);
                     }
 
-                    //adapter
                     adapterUsers = new AdapterUsers(getActivity(), userList);
-                    //set adapter to recycler view
                     recyclerView.setAdapter(adapterUsers);
 
                 }
@@ -108,11 +94,8 @@ public class UsersFragment extends Fragment {
     }
 
     private void searchUsers(String query) {
-        //get current user
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-        //get path of database named "Users" containing users info
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
-        //get all data from path
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -120,11 +103,6 @@ public class UsersFragment extends Fragment {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     ModelUser modelUser = ds.getValue(ModelUser.class);
 
-                    /*Conditions to fulfil search
-                    1) USer not current user
-                    2) The user name or email contains text entered in SearchView (case insensitive)*/
-
-                    //get all searched users except currently signed in user
                     if (!modelUser.getUid().equals(fUser.getUid())){
 
                         if (modelUser.getNombre().toLowerCase().contains(query.toLowerCase()) ||
@@ -134,11 +112,8 @@ public class UsersFragment extends Fragment {
 
                     }
 
-                    //adapter
                     adapterUsers = new AdapterUsers(getActivity(), userList);
-                    //refresh adapter
                     adapterUsers.notifyDataSetChanged();
-                    //set adapter to recycler view
                     recyclerView.setAdapter(adapterUsers);
 
                 }
@@ -154,14 +129,11 @@ public class UsersFragment extends Fragment {
     }
 
     private void checkUserStatus(){
-        //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null){
-            //user is signed in stay here
             //mProfileTv.setText(user.getEmail());
         }
         else{
-            //user not signed in, go to main Activity
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
         }
@@ -169,36 +141,29 @@ public class UsersFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true); // to show menu option in fragment
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
-    /*inflate option menu*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)  {
-        //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
 
-        //hide addpost icon from this fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
 
-        //SearchView
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
-        //search listener
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //called when user press search button from keyboard
-                //if search query is not empty then search
                 if (!TextUtils.isEmpty(s.trim())){
-                    //search text contains text, search it
                     searchUsers(s);
                 }
                 else{
-                    //search text empty, get all users
                     getAllUsers();
                 }
                 return false;
@@ -206,14 +171,10 @@ public class UsersFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //called whenever user press any single letter
-                //if search query is not empty then search
                 if (!TextUtils.isEmpty(s.trim())){
-                    //search text contains text, search it
                     searchUsers(s);
                 }
                 else{
-                    //search text empty, get all users
                     getAllUsers();
                 }
                 return false;
@@ -222,17 +183,14 @@ public class UsersFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*handle menu item clicks*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout){
             firebaseAuth.signOut();
             checkUserStatus();
         }
         else if (id==R.id.action_create_group){
-            //go to GroupCreateActivity activity
             startActivity(new Intent(getActivity(), GroupCreateActivity.class));
         }
 

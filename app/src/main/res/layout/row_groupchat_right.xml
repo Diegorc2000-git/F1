@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_sender"
@@ -19,7 +20,6 @@
 
     <TextView
         android:id="@+id/messageTv"
-        android:layout_below="@id/nameTv"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_width="wrap_content"
@@ -29,13 +29,13 @@
 
     <TextView
         android:id="@+id/timeTv"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
         android:layout_alignParentEnd="true"
         android:text="@string/time"
-        android:layout_below="@id/messageTv"
         android:layout_marginEnd="5dp"
         android:textSize="12sp"
         android:textColor="@color/secondaryColor"/>
 
-</RelativeLayout>
+</LinearLayout>

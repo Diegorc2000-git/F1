@@ -39,25 +39,18 @@ import java.util.HashMap;
 
 public class GroupCreateActivity extends AppCompatActivity {
 
-    //permission constants
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
-    //image pick constants
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
     private static final int IMAGE_PICK_GALLRY_CODE = 400;
-    //permission array
     private String[] cameraPermissions;
     private String[] storagePermissions;
-    //picked image uri
     private Uri image_uri = null;
 
-    //actionbar
     private ActionBar actionBar;
 
-    //firebase auth
     private FirebaseAuth firebaseAuth;
 
-    //UI views
     private ImageView groupIconIv;
     private EditText groupTitleEt, groupDescriptionEt;
     private FloatingActionButton createGroupBtn;
@@ -74,17 +67,14 @@ public class GroupCreateActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setTitle("Create Group");
 
-        //init UI views
         groupIconIv = findViewById(R.id.groupIconIv);
         groupTitleEt = findViewById(R.id.groupTitleEt);
         groupDescriptionEt = findViewById(R.id.groupDescriptionEt);
         createGroupBtn = findViewById(R.id.createGroupBtn);
 
-        //init permission arrays
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        //pick image
         groupIconIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,7 +85,6 @@ public class GroupCreateActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
 
-        //handle click event
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,21 +97,17 @@ public class GroupCreateActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Creating Group");
 
-        //input title, description
         String groupTitle = groupTitleEt.getText().toString().trim();
         String groupDescription = groupDescriptionEt.getText().toString().trim();
-        //validation
         if (TextUtils.isEmpty(groupTitle)){
             Toast.makeText(this, "Please enter group title...", Toast.LENGTH_SHORT).show();
-            return;//dont procede further
+            return;
         }
 
         progressDialog.show();
 
-        //timestamp: for groupicon image, groupeid, timeCreated etc
         String g_timestamp = ""+System.currentTimeMillis();
         if (image_uri == null){
-            //create group without icon image
 
             createGroup(""+g_timestamp,
                     ""+groupTitle,
@@ -131,9 +116,6 @@ public class GroupCreateActivity extends AppCompatActivity {
             );
         }
         else{
-            //creating group with icon image
-            //upload image
-            //image name and path
             String fileNameAndPath = "Group_Imgs/" + "image" + g_timestamp;
 
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(fileNameAndPath);
@@ -141,7 +123,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //image uploaded, get url
                             Task<Uri> p_uriTask = taskSnapshot.getStorage().getDownloadUrl();
                             while (!p_uriTask.isSuccessful());
                             Uri p_downloadUri = p_uriTask.getResult();
@@ -157,7 +138,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            //failed uploading image
                             progressDialog.dismiss();
                             Toast.makeText(GroupCreateActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -166,7 +146,6 @@ public class GroupCreateActivity extends AppCompatActivity {
     }
 
     private void createGroup(String g_timestamp, String groupTitle, String groupDescription, String groupIcon) {
-        //setup info of group
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("groupId", "" + g_timestamp);
         hashMap.put("groupTitle", "" + groupTitle);
@@ -174,15 +153,12 @@ public class GroupCreateActivity extends AppCompatActivity {
         hashMap.put("groupIcon", "" + groupIcon);
         hashMap.put("timestamp", "" + g_timestamp);
         hashMap.put("createdBy", "" + firebaseAuth.getUid());
-        //create group
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
         ref.child(g_timestamp).setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //created succeddfully
 
-                        //setup memeber inf(add current user in group's participants list)
                         HashMap<String, String> hashMap1 = new HashMap<>();
                         hashMap1.put("uid", firebaseAuth.getUid());
                         hashMap1.put("role", "creator");
@@ -194,7 +170,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        //participant added
                                         progressDialog.dismiss();
                                         Toast.makeText(GroupCreateActivity.this, "Group created...", Toast.LENGTH_SHORT).show();
                                     }
@@ -202,7 +177,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        //failed adding participant
                                         progressDialog.dismiss();
                                         Toast.makeText(GroupCreateActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -212,7 +186,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //failed
                         progressDialog.dismiss();
                         Toast.makeText(GroupCreateActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -220,17 +193,13 @@ public class GroupCreateActivity extends AppCompatActivity {
     }
 
     private void showImgaePickDialog() {
-        //options to pick image from
         String[] options = {"Camera", "Gallery"};
-        //dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Image:")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //handle click
                         if (which == 0){
-                            //camera clicked
                             if (!checkCameraPermissions()){
                                 requestCameraPermissions();
                             }
@@ -239,7 +208,6 @@ public class GroupCreateActivity extends AppCompatActivity {
                             }
                         }
                         else{
-                            //gallery clicked
                             if (!checkStoragePermissins()){
                                 requestStoragePermissions();
                             }
@@ -307,18 +275,15 @@ public class GroupCreateActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //handle permission result
         switch (requestCode){
             case CAMERA_REQUEST_CODE:{
                 if (grantResults.length > 0){
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if (cameraAccepted && storageAccepted){
-                        //permission allowed
                         pickFromCamera();
                     }
                     else{
-                        //both or one is denied
                         Toast.makeText(this, "Camera & Storage permissions are required", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -328,11 +293,9 @@ public class GroupCreateActivity extends AppCompatActivity {
                 if (grantResults.length > 0){
                     boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (storageAccepted){
-                        //permission allowes
                         pickFromGallery();
                     }
                     else{
-                        //permission denied
                         Toast.makeText(this, "Storage permissions required", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -343,17 +306,12 @@ public class GroupCreateActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //handle image pick result
         if (requestCode == RESULT_OK){
             if (requestCode == IMAGE_PICK_GALLRY_CODE){
-                //was picked from gallery
                 image_uri = data.getData();
-                //set to imageview
                 groupIconIv.setImageURI(image_uri);
             }
             else if (requestCode == IMAGE_PICK_CAMERA_CODE){
-                //was picked from camera
-                //set to imageview
                 groupIconIv.setImageURI(image_uri);
             }
         }

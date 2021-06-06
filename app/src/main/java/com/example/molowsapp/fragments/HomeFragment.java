@@ -38,7 +38,6 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    //firebase auth
     FirebaseAuth firebaseAuth;
 
     RecyclerView recyclerView;
@@ -46,28 +45,21 @@ public class HomeFragment extends Fragment {
     AdapterPosts adapterPosts;
 
     public HomeFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //init
         firebaseAuth = FirebaseAuth.getInstance();
         
-        //recycler view and its properties
         recyclerView = view.findViewById(R.id.postsRecyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //show newest post first, for this load from last
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
-        //set layout to recyclerview
         recyclerView.setLayoutManager(layoutManager);
         
-        //init post list
         postList = new ArrayList<>();
         
         loadPosts();
@@ -76,9 +68,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadPosts() {
-        //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        //get all data from this ref
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -88,25 +78,20 @@ public class HomeFragment extends Fragment {
 
                     postList.add(modelPost);
 
-                    //adapter
                     adapterPosts = new AdapterPosts(getActivity(), postList);
-                    //set adapter
                     recyclerView.setAdapter(adapterPosts);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //in case of error
                 //Toast.makeText(getActivity(), ""+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void searchPosts(String searchQuery){
-        //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        //get all data from this ref
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -121,59 +106,50 @@ public class HomeFragment extends Fragment {
 
                     postList.add(modelPost);
 
-                    //adapter
                     adapterPosts = new AdapterPosts(getActivity(), postList);
-                    //set adapter
                     recyclerView.setAdapter(adapterPosts);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //in case of error
                 Toast.makeText(getActivity(), ""+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void checkUserStatus(){
-        //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null){
-            //user is signed in stay here
             //mProfileTv.setText(user.getEmail());
         }
         else{
-            //user not signed in, go to main Activity
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
         }
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true); // to show menu option in fragment
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
-    /*inflate option menu*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
 
-        //hide some options
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
 
 
-        //searchview to seach posts by post title/description
+
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
-        //search listener
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //called when user press search button
                 if (!TextUtils.isEmpty(s)){
                     searchPosts(s);
                 }
@@ -185,7 +161,6 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //called as and when user press any letter
                 if (!TextUtils.isEmpty(s)){
                     searchPosts(s);
                 }
@@ -198,10 +173,8 @@ public class HomeFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
-    /*handle menu item clicks*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout){
             firebaseAuth.signOut();

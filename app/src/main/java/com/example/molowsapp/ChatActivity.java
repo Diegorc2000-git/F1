@@ -175,10 +175,10 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         else{
                             //convert timestamp to proper time date
-                            //convert time stamp to dd/mm/yyyy hh:mm am/pm
+                            //convert time stamp to dd/MM/yyyy hh:mm am/pm
                             Calendar cal = Calendar.getInstance(Locale.ENGLISH);
                             //cal.setTimeInMillis(Long.parseLong(onlineStatus));
-                            String dateTime = DateFormat.format("dd/mm/yyyy hh:mm aa", cal).toString();
+                            String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
                             userStatusTv.setText("Last seen at: "+ dateTime);
                         }
                     }
@@ -605,6 +605,7 @@ public class ChatActivity extends AppCompatActivity {
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }

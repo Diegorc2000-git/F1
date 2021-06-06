@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.molowsapp.DashboardActivity;
 import com.example.molowsapp.R;
 import com.example.molowsapp.circuits.RacingActivity;
+import com.example.molowsapp.pilots.PilotsActivity;
 
 public class CochesActivity extends AppCompatActivity {
 
@@ -58,8 +59,8 @@ public class CochesActivity extends AppCompatActivity {
     }
 
     public void pilotos(View view) {
-        /*Intent i = new Intent(this, PilotosActivity.class);
-        startActivity(i);*/
+        Intent i = new Intent(this, PilotsActivity.class);
+        startActivity(i);
     }
 
     public void noticias(View view) {

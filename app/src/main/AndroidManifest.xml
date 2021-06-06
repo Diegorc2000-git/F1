@@ -13,6 +13,11 @@
         android:roundIcon="@mipmap/ic_logo_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
+        <activity android:name=".pilots.InfoPilotsActivity"></activity>
+        <activity android:name=".pilots.PilotsActivity" />
+        <activity android:name=".GroupEditActivity" />
+        <activity android:name=".GroupInfoActivity" />
+        <activity android:name=".GroupParticipantAddActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,9 +37,7 @@
             android:name=".ChatActivity"
             android:theme="@style/AppThemeNo" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".DashboardActivity">
-
-        </activity>
+        <activity android:name=".DashboardActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".teams.DatosActivityEscuderia" />
         <activity
@@ -45,7 +48,6 @@
             android:name=".circuits.RacingActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".MainActivity" />
-
 
         <service
             android:name=".notifications.FirebaseService"
@@ -63,13 +65,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!--
-define file provider
-        set the android:exported attribute to false;
-        the FileProvider does not need to be public
-        Set the android:grantUriPermissions attribute to true
-        to allow you to grant temporary acces to files
-        -->
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.molowsapp"

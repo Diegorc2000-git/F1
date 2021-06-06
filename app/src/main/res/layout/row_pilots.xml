@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/secondaryDarkColor"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@color/secondaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/IvCity"
+            android:padding="10dp"
+            android:src="@drawable/ic_users_black"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/primaryTextColor"
+            android:text="@string/test"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:fontFamily="serif"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/tvNickName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:layout_marginTop="25dp"
+            android:layout_weight="1"
+            android:textColor="@color/primaryTextColor"
+            android:fontFamily="serif"
+            android:text="@string/test"
+            android:textSize="30sp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

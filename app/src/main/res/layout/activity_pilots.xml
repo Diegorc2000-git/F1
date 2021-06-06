@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pilots.PilotsActivity">
+
+    <LinearLayout
+        android:id="@+id/llOpciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center"
+        android:background="@color/secondaryColor"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_news"
+            android:background="@drawable/button_round_red"
+            android:layout_weight="1"
+            android:textColor="@color/secondaryColor"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:onClick="news"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_circuits"
+            android:background="@drawable/button_round_red"
+            android:layout_weight="1"
+            android:textColor="@color/secondaryColor"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:onClick="circuits"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_team"
+            android:background="@drawable/button_round_red"
+            android:layout_weight="1"
+            android:textColor="@color/secondaryColor"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:onClick="teams"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPilots"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_below="@id/llOpciones" />
+
+</RelativeLayout>

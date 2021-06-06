@@ -8,7 +8,17 @@
     android:id="@+id/messageLayout"
     android:padding="10dp">
 
+    <TextView
+        android:id="@+id/timeTv"
+        android:textAlignment="textStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/_02_03_2019_05_59pm"
+        android:textColor="@color/secondaryDarkColor"
+        android:textSize="12sp"/>
+
     <LinearLayout
+        android:layout_marginEnd="160dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -30,14 +40,6 @@
             android:text="@string/his_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/timeTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_02_03_2019_05_59pm"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="12sp"/>
 
     </LinearLayout>
 

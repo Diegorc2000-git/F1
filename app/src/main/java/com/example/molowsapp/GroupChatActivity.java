@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.example.molowsapp.adapters.AdapterGroupChat;
 import com.example.molowsapp.adapters.AdapterGroupChatList;
 import com.example.molowsapp.models.ModelGroupChat;
+import com.example.molowsapp.notifications.Data;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +38,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
 
-    private String groupId;
+    private String groupId, myGroupRole="";
 
     private Toolbar toolbar;
     private ImageView groupeIconIv;
@@ -52,34 +55,31 @@ public class GroupChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat);
 
-        //init views
         toolbar = findViewById(R.id.toolbar);
         groupeIconIv = findViewById(R.id.groupeIconIv);
         groupeTitleTv = findViewById(R.id.groupeTitleTv);
-        messageEt = findViewById(R.id.messageEt2);
+        messageEt = findViewById(R.id.messageEt);
         senBtn = findViewById(R.id.senBtn);
         chatRv = findViewById(R.id.chatRv);
 
-        //get id of the group
+        setSupportActionBar(toolbar); // minuto 59:50 del video 39
+
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
 
         firebaseAuth = FirebaseAuth.getInstance();
         loadGroupInfo();
         loadGroupMessage();
+        loadMyGroupRole();
 
 
         senBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //input data
                 String message = messageEt.getText().toString().trim();
-                //validate
                 if (TextUtils.isEmpty(message)){
-                    //empty don't send
-                    Toast.makeText(GroupChatActivity.this, "Can't send empty message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupChatActivity.this, "Can't send empty message...", Toast.LENGTH_SHORT).show();
                 }else{
-                    //send message
                     sendMessage(message);
                 }
             }
@@ -87,8 +87,27 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
+    private void loadMyGroupRole() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+        ref.child(groupId).child("Participants")
+                .orderByChild("uid").equalTo(firebaseAuth.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            myGroupRole = ""+ds.child("role").getValue();
+                            invalidateOptionsMenu();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
     private void loadGroupMessage() {
-        //init list
         groupChatList = new ArrayList<>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
@@ -101,9 +120,7 @@ public class GroupChatActivity extends AppCompatActivity {
                             ModelGroupChat model = ds.getValue(ModelGroupChat.class);
                             groupChatList.add(model);
                         }
-                        //adapter
                         adapterGroupChat = new AdapterGroupChat(GroupChatActivity.this, groupChatList);
-                        //set to recycler
                         chatRv.setAdapter(adapterGroupChat);
                     }
 
@@ -112,37 +129,30 @@ public class GroupChatActivity extends AppCompatActivity {
 
                     }
                 });
-
     }
 
     private void sendMessage(String message) {
 
-        //timestamp
         String timestamp = ""+System.currentTimeMillis();
 
-        //set up message data
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", "" + firebaseAuth.getUid());
         hashMap.put("message", "" + message);
         hashMap.put("timestamp", "" + timestamp);
-        hashMap.put("type", "" + "text"); //text image file
+        hashMap.put("type", "" + "text");
 
-        //add in db
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
         ref.child(groupId).child("Messages").child(timestamp)
                 .setValue(hashMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //message sent
-                        //clear messageEt
                         messageEt.setText("");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //message send failed
                         Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -176,5 +186,39 @@ public class GroupChatActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_search).setVisible(false);
+
+        if (myGroupRole.equals("creator") || myGroupRole.equals("admin")){
+            menu.findItem(R.id.action_add_participant_group).setVisible(true);
+        }
+        else{
+            menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_add_participant_group){
+            Intent intent = new Intent(this, GroupParticipantAddActivity.class);
+            intent.putExtra("groupId", groupId);
+            startActivity(intent);
+        }
+        else if (id == R.id.action_groupinfo){
+            Intent intent = new Intent(this, GroupInfoActivity.class);
+            intent.putExtra("groupId", groupId);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

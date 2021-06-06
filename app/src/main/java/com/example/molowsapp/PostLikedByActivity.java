@@ -37,10 +37,8 @@ public class PostLikedByActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_liked_by);
 
-        //actionbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Post liked by");
-        //add back button
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
@@ -52,11 +50,9 @@ public class PostLikedByActivity extends AppCompatActivity {
 
         userList = new ArrayList<>();
 
-        //get the post id
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
 
-        //get list of UID's of users who liked the post
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Likes");
         ref.child(postId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -65,7 +61,6 @@ public class PostLikedByActivity extends AppCompatActivity {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     String hisUid = ""+ ds.getRef().getKey();
 
-                    //get user info for each id
                     getUser(hisUid);
                 }
             }
@@ -78,7 +73,6 @@ public class PostLikedByActivity extends AppCompatActivity {
     }
 
     private void getUser(String hisUid) {
-        //get information for each user using uid
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.orderByChild("uid").equalTo(hisUid)
                 .addValueEventListener(new ValueEventListener() {
@@ -89,9 +83,7 @@ public class PostLikedByActivity extends AppCompatActivity {
                             userList.add(modelUser);
                         }
 
-                        //set up Adapter
                         adapterUsers = new AdapterUsers(PostLikedByActivity.this, userList);
-                        //set adapter to recycler
                         recyclerViewp.setAdapter(adapterUsers);
                     }
 
@@ -104,7 +96,7 @@ public class PostLikedByActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed(); //go to previous activity
+        onBackPressed();
         return super.onSupportNavigateUp();
     }
 }

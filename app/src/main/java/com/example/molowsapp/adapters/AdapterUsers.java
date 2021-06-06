@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.molowsapp.ChatActivity;
+import com.example.molowsapp.GroupChatActivity;
 import com.example.molowsapp.R;
 import com.example.molowsapp.ThereProfileActivity;
 import com.example.molowsapp.models.ModelUser;
@@ -36,11 +37,9 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     Context context;
     List<ModelUser> userList;
 
-    //for getting current user's uid
     FirebaseAuth firebaseAuth;
     String myUid;
 
-    //contructor
     public AdapterUsers(Context context, List<ModelUser> userList) {
         this.context = context;
         this.userList = userList;
@@ -52,7 +51,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        //inflate layout(row_user.xml)
         View view = LayoutInflater.from(context).inflate(R.layout.row_users, viewGroup, false);
 
         return new MyHolder(view);
@@ -60,13 +58,11 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
-        //get data
         String hisUID = userList.get(i).getUid();
         String userImage = userList.get(i).getImagen();
         String userName = userList.get(i).getNombre();
         String userEmail = userList.get(i).getEmail();
 
-        //set data
         myHolder.mNameTv.setText(userName);
         myHolder.mEmailTv.setText(userEmail);
         try{
@@ -79,39 +75,32 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
         }
 
         myHolder.blockIv.setImageResource(R.drawable.ic_unblocked_green);
-        //check if each user if is blocked or no
         checkIsBlocked(hisUID, myHolder, i);
 
-        //handle item click
         myHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //show dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setItems(new String[]{"Profile", "Chat"}, new DialogInterface.OnClickListener() {
+                builder.setItems(new String[]{"Profile", "Chat", "GroupChat"}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
-                            //profile clicked
-                            /*click to go to ThereProfileActivity with uid, this uid is of clicked user
-                             which will be used to show user specific data/posts/*/
                             Intent intent = new Intent(context, ThereProfileActivity.class);
                             intent.putExtra("uid", hisUID);
                             context.startActivity(intent);
                         }
                         if (which == 1){
-                            //chat clicked
-                            /*Click user from user list to start chatting/messaging
-                             * Start activity by putting UIS of receiver
-                             * we will use that UIS to identify the user we are gonna chat*/
                             imBlockedOrNot(hisUID);
+                        }
+                        if (which == 2){
+                            Intent intent = new Intent(context, GroupChatActivity.class);
+                            context.startActivity(intent);
                         }
                     }
                 });
                 builder.create().show();
             }
         });
-        //click to block unblock user
         myHolder.blockIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,10 +115,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     }
 
     private void imBlockedOrNot(String hisUID){
-        /*first check if sender(current user) is blocked by receiver or not
-         Logic: if uid of the sender(current user) exist in "BlockedUsers" of receiver then sender is blocked, otherwise not
-         if blocked then just display a message e.g. You're blocked by that user, can't send message
-         if not blocked then simply strat that chat activity*/
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.child(hisUID).child("BlockedUsers").orderByChild("uid").equalTo(myUid)
                 .addValueEventListener(new ValueEventListener() {
@@ -138,11 +123,9 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
                         for (DataSnapshot ds: snapshot.getChildren()){
                             if (ds.exists()){
                                 Toast.makeText(context, "You're blocked by that user, can't send message", Toast.LENGTH_SHORT).show();
-                                //blocked, don't proceed further
                                 return;
                             }
                         }
-                        //not blocked, startActivity
                         Intent intent = new Intent(context, ChatActivity.class);
                         intent.putExtra("hisUid", hisUID);
                         context.startActivity(intent);
@@ -156,8 +139,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     }
 
     private void checkIsBlocked(String hisUID, MyHolder myHolder, int i) {
-        //check each user, if blocked or not
-        //if uid of the user exist in "BlockedUsers" then that user is blocked, otherwise not
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUID)
                 .addValueEventListener(new ValueEventListener() {
@@ -179,9 +160,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     }
 
     private void blockUser(String hisUID) {
-        //block the user, by adding uid to current user's "BlockedUsers" node
-
-        //put values in hasmap to put in db
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("uid", hisUID);
 
@@ -190,21 +168,18 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //blocked successfully
                         Toast.makeText(context, "Bloked Successfully...", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //failed to block
                         Toast.makeText(context, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void unBlockUser(String hisUID) {
-        //unblock the user, by removing uid from current user's "BlockedUsers" node
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUID)
@@ -213,19 +188,16 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             if (ds.exists()){
-                                //remove blocked user data from current user's BlocedUsers list
                                 ds.getRef().removeValue()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                //unblocked successfully
                                                 Toast.makeText(context, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                //failed to unblock
                                                 Toast.makeText(context, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -245,7 +217,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
         return userList.size();
     }
 
-    //view holder class
     class MyHolder extends RecyclerView.ViewHolder{
 
         ImageView mAvatarIv, blockIv;
@@ -254,7 +225,6 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
-            //init views
             mAvatarIv = itemView.findViewById(R.id.avatarIv);
             blockIv = itemView.findViewById(R.id.blockIv);
             mNameTv = itemView.findViewById(R.id.nameTv);

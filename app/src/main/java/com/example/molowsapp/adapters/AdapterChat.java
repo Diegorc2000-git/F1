@@ -45,7 +45,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        //inflate layouts: row_chat_left.xml for receiver, row_chat_right.xml for sender
         if (i == MSG_TYPE_RIGHT){
             View view = LayoutInflater.from(context).inflate(R.layout.row_chat_right, viewGroup, false);
             return  new MyHolder(view);
@@ -58,16 +57,14 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
-        //get data
         String message = chatList.get(i).getMensaje();
         String timeStamp = chatList.get(i).getTimestamp();
 
-        //convert time stamp to dd/mm/yyyy hh:mm am/pm
+        //Convertimos el tiempo a dd/MM/yyyy hh:mm am/pm
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(timeStamp));
-        String dateTime = DateFormat.format("dd/mm/yyyy hh:mm aa", cal).toString();
+        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
 
-        //set data
         myHolder.messageTv.setText(message);
         myHolder.timeTv.setText(dateTime);
         try{
@@ -77,41 +74,34 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
         }
 
-        //click to show alert dialog
         myHolder.messageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //show delete message confirm dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Delete");
                 builder.setMessage("Are you sure to delete this message");
-                //delete button
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deleteMessage(i);
                     }
                 });
-                //cancel delete button
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //dialog dismiss
                         dialog.dismiss();
                     }
                 });
-                //create and show dialog
                 builder.create().show();
             }
         });
 
-        //set seen/delivered status of message
         if (i==chatList.size()-1){
             if (chatList.get(i).isSeen()){
-                myHolder.isSeenTv.setText("Visto");
+                myHolder.isSeenTv.setText("seen");
             }
             else{
-                myHolder.isSeenTv.setText("Enviado");
+                myHolder.isSeenTv.setText("delivered");
             }
         }else{
             myHolder.isSeenTv.setVisibility(View.GONE);
@@ -120,13 +110,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
     private void deleteMessage(int position) {
         String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-
-        /*logic:
-        get timestamp of clicked message
-        Compare the timestamp of the clicked message with all message in chats
-        where both values matches delete that message
-        this will allow sender to delete his and receiver message*/
 
         String msgTimeStamp = chatList.get(position).getTimestamp();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
@@ -137,16 +120,14 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
 
                     if (ds.child("enviado").getValue().equals(myUID)){
+                        /*Podemos hacer dos formas para borrar el mensaje,
+                            1)Borrar el mensaje del chat
+                            2)Asignar el valor del mensaje a  "This message was delete..."
 
-                        /*we can do one of two things there
-                             1)Remove the message from chat
-                             2)set the value of message "This message was delete..."
-                                 So do whatever you want"*/
-
-                        //1) remove the message from chat
+                        1) borrar el mensaje del chat*/
                         //ds.getRef().removeValue();
 
-                        //2) Set the value of message to "This message was delete..."
+                        //2)Asignar el valor del mensaje a  "This message was delete..."
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("mensaje", "This message was delete...");
                         ds.getRef().updateChildren(hashMap);
@@ -176,7 +157,6 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        //get currently signed in user
         fUser = FirebaseAuth.getInstance().getCurrentUser();
         if (chatList.get(position).getEnviado().equals(fUser.getUid())){
             return MSG_TYPE_RIGHT;
@@ -192,18 +172,15 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         this.imageUrl = imageUrl;
     }
 
-    //view holder class
     class MyHolder extends RecyclerView.ViewHolder{
 
-        //views
         ImageView profileIv;
         TextView messageTv, timeTv, isSeenTv;
-        LinearLayout messageLayout; //for click listener to show delete
+        LinearLayout messageLayout;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
-            //init views
             profileIv = itemView.findViewById(R.id.profileIv);
             messageTv = itemView.findViewById(R.id.messageTv);
             timeTv = itemView.findViewById(R.id.timeTv);

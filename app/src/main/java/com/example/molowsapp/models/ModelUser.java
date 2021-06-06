@@ -2,7 +2,6 @@ package com.example.molowsapp.models;
 
 public class ModelUser {
 
-    //use same name as in firebase database
     String nombre, email, search, telefono, imagen, cover, uid, onlineStatus, typingTo;
     boolean isBlocked = false;
 

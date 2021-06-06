@@ -91,9 +91,16 @@
     <!--CircuitosActivity-->
     <string name="btn_team">Teams</string>
 
+    <!--Row_partipant_add-->
+    <string name="status">Status</string>
+
+    <!--activity_info_pilots-->
+    <string name="pilot">PILOT</string>
+    <string name="descrition_Pilot">Descrition</string>
+
+    <!-- -->
+    <!-- -->
     <!-- -->
 
-
-    <!-- -->
 
 </resources>

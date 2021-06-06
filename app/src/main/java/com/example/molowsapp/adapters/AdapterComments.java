@@ -48,7 +48,6 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        //bind the row_comments.xml layout
         View view = LayoutInflater.from(context).inflate(R.layout.row_comments, viewGroup, false);
 
         return new MyHolder(view);
@@ -56,7 +55,6 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
-        //get data
         String uid = commentList.get(i).getUid();
         String name = commentList.get(i).getuName();
         String email = commentList.get(i).getuEmail();
@@ -65,50 +63,40 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
         String comment = commentList.get(i).getComment();
         String timestamp = commentList.get(i).getTimestamp();
 
-        //converter timestamp to dd/mm/yyyy hh:mm am/pm
+        //convertir el tiempo a dd/MM/yyyy hh:mm am/pm
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(timestamp));
         String pTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-        //set data
         myHolder.nameTv.setText(name);
         myHolder.commentTv.setText(comment);
         myHolder.timeTv.setText(pTime);
-        //set user dp
         try{
             Picasso.get().load(image).placeholder(R.drawable.ic_default_img).into(myHolder.avatarIv);
         }catch (Exception e){}
 
-        //comment click listener
         myHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //check if this comment is by currently signed in user or not
                 if (myUid.equals(uid)){
-                    //my comment
-                    //show delete dial
                     AlertDialog.Builder builder = new AlertDialog.Builder(v.getRootView().getContext());
                     builder.setTitle("Delete");
                     builder.setMessage("Are you sure to delete this comment?");
                     builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //delete comment
                             deleteComment(cid);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //dismiss dialog
                             dialog.dismiss();
                         }
                     });
-                    //show dialog
                     builder.create().show();
                 }
                 else{
-                    //no my comment
                     Toast.makeText(context, "Can't delete other's comment...", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -118,9 +106,8 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
 
     private void deleteComment(String cid) {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId);
-        ref.child("Comments").child(cid).removeValue(); //it will delete the comment
+        ref.child("Comments").child(cid).removeValue();
 
-        //now update the comments count
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -144,7 +131,6 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
 
     class MyHolder extends RecyclerView.ViewHolder{
 
-        //declare views from row_comments.xml
         ImageView avatarIv;
         TextView nameTv, commentTv, timeTv;
 

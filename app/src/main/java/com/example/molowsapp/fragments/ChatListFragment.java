@@ -39,7 +39,6 @@ import java.util.List;
 
 public class ChatListFragment extends Fragment {
 
-    //firebase auth
     FirebaseAuth firebaseAuth;
     RecyclerView recyclerView;
     List<ModelChatlist> chatlistsList;
@@ -50,16 +49,13 @@ public class ChatListFragment extends Fragment {
 
 
     public ChatListFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
 
-        //init
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -103,11 +99,8 @@ public class ChatListFragment extends Fragment {
                             break;
                         }
                     }
-                    //adapter
                     adapterChatlist = new AdapterChatlist(getContext(), userList);
-                    //setAdapter
                     recyclerView.setAdapter(adapterChatlist);
-                    //set last message
                     for (int i=0; i<userList.size(); i++){
                         lastMessage(userList.get(i).getUid());
                     }
@@ -157,14 +150,11 @@ public class ChatListFragment extends Fragment {
     }
 
     private void checkUserStatus(){
-        //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null){
-            //user is signed in stay here
             //mProfileTv.setText(user.getEmail());
         }
         else{
-            //user not signed in, go to main Activity
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
         }
@@ -172,33 +162,29 @@ public class ChatListFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true); // to show menu option in fragment
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
-    /*inflate option menu*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)  {
-        //inflate menu
         inflater.inflate(R.menu.menu_main, menu);
 
-        //hide addpost icon from this fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
 
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*handle menu item clicks*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout){
             firebaseAuth.signOut();
             checkUserStatus();
         }
         else if (id==R.id.action_create_group){
-            //go to GroupCreateActivity activity
             startActivity(new Intent(getActivity(), GroupCreateActivity.class));
         }
 

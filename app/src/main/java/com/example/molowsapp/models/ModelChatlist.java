@@ -1,7 +1,7 @@
 package com.example.molowsapp.models;
 
 public class ModelChatlist {
-    String id; //we will need this id to get chat list, sender/receiver uid
+    String id;
 
     public ModelChatlist(String id) {
         this.id = id;

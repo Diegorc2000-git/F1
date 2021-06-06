@@ -43,7 +43,6 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
     @NonNull
     @Override
     public HolderGroupChat onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //inflate layout
         if (viewType == MSG_TYPE_RIGHT){
             View view = LayoutInflater.from(context).inflate(R.layout.row_groupchat_right, parent, false);
             return new HolderGroupChat(view);
@@ -57,18 +56,16 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
 
     @Override
     public void onBindViewHolder(@NonNull AdapterGroupChat.HolderGroupChat holder, int position) {
-        //get data
         ModelGroupChat model = modelGroupChatsList.get(position);
         String timestamp = model.getTimestamp();
         String message = model.getMessage();
         String senderUid = model.getSender();
 
-        //convert time stamp to dd/mm/yyyy hh:mm am/pm
+        //convert dateTime to dd/MM/yyyy hh:mm am/pm
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(timestamp));
-        String dateTime = DateFormat.format("dd/mm/yyyy hh:mm aa", cal).toString();
+        String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
 
-        //set data
         holder.messageTv.setText(message);
         holder.timeTv.setText(dateTime);
 
@@ -76,7 +73,6 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
     }
 
     private void setUserName(ModelGroupChat model, HolderGroupChat holder) {
-        //get sender info from uid in model
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.orderByChild("uid").equalTo(model.getSender())
                 .addValueEventListener(new ValueEventListener() {

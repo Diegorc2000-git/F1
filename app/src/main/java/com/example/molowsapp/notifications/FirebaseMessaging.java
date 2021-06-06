@@ -29,7 +29,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        //get current user from shared preferences
         SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
         String savedCurrentUser = sp.getString("Current_USERID", "None");
 
@@ -112,10 +111,8 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
-        //update user token
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user!=null){
-            //signed in, update token
             updateToken(s);
         }
     }

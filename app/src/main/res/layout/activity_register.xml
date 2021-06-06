@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
+    android:background="@drawable/wallpaper_login_singin"
     tools:context=".RegisterActivity">
 
     <!--TextView: Label Register-->

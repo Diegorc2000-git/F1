@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    android:background="@color/primaryTextColor"
+    android:background="@drawable/wallpaper_add_post"
     tools:context=".GroupCreateActivity">
 
     <!--ImageView: Group Icon image (Pick/Display)-->
@@ -30,7 +30,6 @@
     <!--EditText: Group Description-->
     <EditText
         android:id="@+id/groupDescriptionEt"
-        android:minHeight="100dp"
         android:gravity="top"
         android:inputType="textMultiLine|textCapSentences"
         android:layout_width="match_parent"

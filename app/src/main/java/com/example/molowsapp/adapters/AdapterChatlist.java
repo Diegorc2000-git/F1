@@ -22,7 +22,7 @@ import java.util.List;
 public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHolder>{
 
     Context context;
-    List<ModelUser> usersList; //get user info
+    List<ModelUser> usersList;
     private HashMap<String, String> lastMessageMap;
 
     public AdapterChatlist(Context context, List<ModelUser> usersList) {
@@ -34,20 +34,17 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        //inflate layout row_chatlist.xml
         View view = LayoutInflater.from(context).inflate(R.layout.row_chatlist, viewGroup, false);
         return new MyHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
-        //get data
         String hisUid = usersList.get(i).getUid();
         String userImage = usersList.get(i).getImagen();
         String userName = usersList.get(i).getNombre();
         String lastMessage = lastMessageMap.get(hisUid);
 
-        //set data
         myHolder.nameTv.setText(userName);
         if (lastMessage == null || lastMessage.equals("default")){
             myHolder.lastMessageTv.setVisibility(View.GONE);
@@ -62,21 +59,16 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
         catch (Exception e){
             Picasso.get().load(R.drawable.ic_default_img).into(myHolder.profileIv);
         }
-        //set online status of other user in chat
        if (usersList.get(i).getOnlineStatus().equals("online")){
-           //online
            myHolder.onlineStatusIv.setImageResource(R.drawable.circle_online);
        }
        else{
-           //offline
            myHolder.onlineStatusIv.setImageResource(R.drawable.circle_offline);
        }
 
-       //handle click of the user in chat
         myHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //start chat activity with that user
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("hisUis", hisUid);
                 context.startActivity(intent);
@@ -91,12 +83,11 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
 
     @Override
     public int getItemCount() {
-        return usersList.size(); // size of the list
+        return usersList.size();
     }
 
 
     class MyHolder extends RecyclerView.ViewHolder{
-        //views of row_chatlist.xml
         ImageView profileIv, onlineStatusIv;
         TextView nameTv, lastMessageTv;
 
@@ -104,7 +95,6 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
-            //init views
             profileIv = itemView.findViewById(R.id.profileIv);
             onlineStatusIv = itemView.findViewById(R.id.onlineStatusIv);
             nameTv = itemView.findViewById(R.id.nameTv);
