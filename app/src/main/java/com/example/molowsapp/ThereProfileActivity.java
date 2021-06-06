@@ -33,11 +33,14 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ThereProfileActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
 
-    ImageView avatarIv, coverIv;
+    CircleImageView avatarIv;
+    ImageView coverIv;
     TextView nameTv, emailTv, phoneTv;
     RecyclerView postsRecyclerView;
 
@@ -198,6 +201,8 @@ public class ThereProfileActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);

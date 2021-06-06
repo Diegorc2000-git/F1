@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1EDED"
+    android:background="@color/secondaryColor"
     tools:context=".fragments.ProfileFragment">
 
     <ScrollView
@@ -19,7 +19,7 @@
                 android:id="@+id/coverIv"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:background="@drawable/wallpaper_profile"
+                android:background="#F1EDED"
                 android:scaleType="fitXY">
 
             </ImageView>
@@ -31,10 +31,9 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="100dp">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatarIv"
                     android:layout_marginStart="20dp"
-                    android:background="@color/primaryTextColor"
                     android:padding="5dp"
                     android:src="@drawable/ic_default_white"
                     android:layout_width="120dp"

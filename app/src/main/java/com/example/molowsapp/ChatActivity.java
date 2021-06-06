@@ -80,7 +80,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
-    //views from xml
     Toolbar toolbar;
     RecyclerView recyclerView;
     CircleImageView profileIv;
@@ -89,13 +88,11 @@ public class ChatActivity extends AppCompatActivity {
     EditText messageEt;
     ImageButton sendBtn;
 
-    //firebase auth
     FirebaseAuth firebaseAuth;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference usersDbRef;
 
-    //for checking if use has seen message or not
     ValueEventListener seenListener;
     DatabaseReference userRefForSeen;
 
@@ -108,7 +105,6 @@ public class ChatActivity extends AppCompatActivity {
 
     boolean isBlocked = false;
 
-    //volley request queue for INotificationSideChannel
     private RequestQueue requestQueue;
 
     private boolean notify = false;
@@ -118,7 +114,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        //init views
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("");
@@ -132,49 +127,38 @@ public class ChatActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        //Layout (linearLayout) for RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
-        //recyclerview properties
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        /*On click user from users list we have passed that user's UID using intent
-        So get that uid here to get the profile picture, name and start chat with that user*/
+
         Intent intent = getIntent();
         hisUid = intent.getStringExtra("hisUid");
 
-        //firebase auth instance
         firebaseAuth = FirebaseAuth.getInstance();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         usersDbRef = firebaseDatabase.getReference("Usuarios");
 
-        //search user to get that user's info
         Query userQuery = usersDbRef.orderByChild("uid").equalTo(hisUid);
-        //get user picture and name
         userQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //check until required info receive
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    //get data
                     String name = ""+ds.child("nombre").getValue();
                     hisImage = ""+ds.child("imagen").getValue();
                     String typingStatus = ""+ds.child("typingTo").getValue();
 
-                    //check typing status
                     if (typingStatus.equals(myUid)){
                         userStatusTv.setText("typing...");
                     }
                     else{
-                        //get value of onlineStatus
                         String onlineStatus = ""+ds.child("onlineStatus").getValue();
                         if (onlineStatus.equals("online")){
                             userStatusTv.setText(onlineStatus);
                         }
                         else{
-                            //convert timestamp to proper time date
                             //convert time stamp to dd/MM/yyyy hh:mm am/pm
                             Calendar cal = Calendar.getInstance(Locale.ENGLISH);
                             //cal.setTimeInMillis(Long.parseLong(onlineStatus));
@@ -183,13 +167,10 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     }
 
-                    //set data
                     nameTv.setText(name);
                     try{
-                        //image received, set it to imageview in toolbal
                         Picasso.get().load(hisImage).placeholder(R.drawable.ic_default_white).into(profileIv);
                     }catch (Exception e){
-                        //there is execption getting picture, set default picture
                         Picasso.get().load(R.drawable.ic_default_white).into(profileIv);
                     }
                 }
@@ -201,28 +182,21 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        //click button to send message
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 notify = true;
-                //get text from edit text
                 String message = messageEt.getText().toString().trim();
-                // check if text is empty or not
                 if (TextUtils.isEmpty(message)){
-                    //text empty
                     Toast.makeText(ChatActivity.this, "Cannot send the empty message...", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    //text not empty
                     sendMessage(message);
                 }
-                //reset edittect after sending message
                 messageEt.setText("");
             }
         });
 
-        //check edit text change listener
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -235,7 +209,7 @@ public class ChatActivity extends AppCompatActivity {
                     checkTypingStatus("noOne");
                 }
                 else{
-                    checkTypingStatus(hisUid); //uid of receiver
+                    checkTypingStatus(hisUid);
                 }
 
             }
@@ -267,8 +241,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void checkIsBlocked() {
-        //check each user, if blocked or not
-        //if uid of the user exist in "BlockedUsers" then that user is blocked, otherwise not
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.child(firebaseAuth.getUid()).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
                 .addValueEventListener(new ValueEventListener() {
@@ -290,9 +262,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void blockUser() {
-        //block the user, by adding uid to current user's "BlockedUsers" node
 
-        //put values in hasmap to put in db
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("uid", hisUid);
 
@@ -301,7 +271,6 @@ public class ChatActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        //blocked successfully
                         Toast.makeText(ChatActivity.this, "Bloked Successfully...", Toast.LENGTH_SHORT).show();
                         blockIv.setImageResource(R.drawable.ic_blocked_red);
 
@@ -310,15 +279,12 @@ public class ChatActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //failed to block
                         Toast.makeText(ChatActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void unBlockUser() {
-        //unblock the user, by removing uid from current user's "BlockedUsers" node
-
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
         ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -326,12 +292,10 @@ public class ChatActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             if (ds.exists()){
-                                //remove blocked user data from current user's BlocedUsers list
                                 ds.getRef().removeValue()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                //unblocked successfully
                                                 Toast.makeText(ChatActivity.this, "Unbloked Successfully...", Toast.LENGTH_SHORT).show();
                                                 blockIv.setImageResource(R.drawable.ic_unblocked_green);
 
@@ -340,7 +304,6 @@ public class ChatActivity extends AppCompatActivity {
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                //failed to unblock
                                                 Toast.makeText(ChatActivity.this, "Failed: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -392,10 +355,8 @@ public class ChatActivity extends AppCompatActivity {
                         chatList.add(chat);
                     }
 
-                    //adapter
                     adapterChat = new AdapterChat(ChatActivity.this, chatList, hisImage);
                     adapterChat.notifyDataSetChanged();
-                    //set adapter to recyclerview
                     recyclerView.setAdapter(adapterChat);
                 }
             }
@@ -408,13 +369,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String message) {
-        /*"Chats node will be created that will contain all chats
-        Whenever user send message it will create new child in "Chats" node and that child will contain
-        the following key values
-        sender: UID of sender
-        receiver: UID if receiver
-        message: the actual message*/
-
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         String timesTamp = String.valueOf(System.currentTimeMillis());
@@ -445,7 +399,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        //create chatlis node/child in firebase database
         final DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("Chatlist")
                 .child(myUid)
                 .child(hisUid);
@@ -496,14 +449,12 @@ public class ChatActivity extends AppCompatActivity {
 
                     Sender sender = new Sender(data, token.getToken());
 
-                    //fcm json objetc request
                     try{
                         JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
-                                        //response of the request
                                         Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
                                     }
                                 }, new Response.ErrorListener() {
@@ -515,7 +466,6 @@ public class ChatActivity extends AppCompatActivity {
                             @Nullable
                             @Override
                             protected Map<String, String> getParams() throws AuthFailureError {
-                                //put params
                                 Map<String, String> headers = new HashMap<>();
                                 headers.put("Content-Type", "application/json");
                                 headers.put("Authorization", "key=AAAAMAlP890:APA91bHpcHuYvztIGhRCNsiXINywLw3sPK7pDH9BEvuAsqVx-EM1mMESCve-uGrXMmEPZHUp1fisw0c5_vNCh6hFbmrRpYK6trYJeUA_2895xSfKVLcIYw10XVttZd-_IC2GQ08ijbeU");
@@ -524,7 +474,6 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         };
 
-                        //add this request to queue
                         requestQueue.add(jsonObjectRequest);
                     }catch (JSONException e){
                         e.printStackTrace();
@@ -541,16 +490,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void checkUserStatus(){
-        //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null){
-            //user is signed in stay here
-            //set email of logged in user
-            //mProfileTv.setText(user.getEmail());
-            myUid = user.getUid(); //currently signed in user's uid
+
+            myUid = user.getUid();
         }
         else{
-            //user not signed in, go to main Activity
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -560,7 +505,6 @@ public class ChatActivity extends AppCompatActivity {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Usuarios").child(myUid);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("onlineStatus", status);
-        //update value of onlineStatus of current user
         dbRef.updateChildren(hashMap);
     }
 
@@ -568,14 +512,12 @@ public class ChatActivity extends AppCompatActivity {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Usuarios").child(myUid);
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("typingTo", typing);
-        //update value of onlineStatus of current user
         dbRef.updateChildren(hashMap);
     }
 
     @Override
     protected void onStart() {
         checkUserStatus();
-        //set online
         checkOnlineStatus("online");
         super.onStart();
     }
@@ -583,9 +525,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //get timestamp
         String timestamp = String.valueOf(System.currentTimeMillis());
-        //set onfline with last seen time stamp
         checkOnlineStatus(timestamp);
         checkTypingStatus("noOne");
         userRefForSeen.removeEventListener(seenListener);
@@ -593,7 +533,6 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        //set online
         checkOnlineStatus("online");
         super.onResume();
     }
@@ -601,7 +540,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        //hide searchview, as we don't need it here
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);

@@ -252,10 +252,8 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, ""+user.getEmail(), Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                             finish();
-                            //updateUI(user);
                         } else {
                             Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {

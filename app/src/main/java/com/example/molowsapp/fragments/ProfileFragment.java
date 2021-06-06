@@ -64,6 +64,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
@@ -73,9 +75,10 @@ public class ProfileFragment extends Fragment {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     StorageReference storageReference;
-    String storagePath = "Perfil_Usuarios_Cover_Imgs/";
+    String storagePath = "Usuarios_Profile_Cover_Imgs/";
 
-    ImageView avatarIv, coverIv;
+    CircleImageView avatarIv;
+    ImageView coverIv;
     TextView nameTv, emailTv, phoneTv;
     FloatingActionButton fab;
     RecyclerView postsRecyclerView;
@@ -109,7 +112,7 @@ public class ProfileFragment extends Fragment {
         user = firebaseAuth.getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Usuarios");
-        //storageReference = getInstance().getReference;
+        //storageReference = getInflater().get
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermisions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -249,7 +252,7 @@ public class ProfileFragment extends Fragment {
         return result;
     }
 
-    private void requestCameraPermission() {
+    private void requestStoragePermission(){
         requestPermissions(storagePermisions, STORAGE_REQUEST_CODE);
     }
 
@@ -262,7 +265,7 @@ public class ProfileFragment extends Fragment {
         return result && result1;
     }
 
-    private void requestStoragePermission(){
+    private void requestCameraPermission() {
         requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
@@ -289,7 +292,7 @@ public class ProfileFragment extends Fragment {
                     pd.setMessage("Update Phone");
                     showNamePhoneUpdateDialog("telefono");
                 }else if (which == 4){
-                    pd.setMessage("Chamging Password");
+                    pd.setMessage("Changing Password");
                     showChangePasswordDialog();
                 }
             }
@@ -520,12 +523,12 @@ public class ProfileFragment extends Fragment {
             break;
             case STORAGE_REQUEST_CODE:{
                 if (grantResults.length > 0){
-                    boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if (writeStorageAccepted){
                         pickFromGallery();
                     }
                     else{
-                        Toast.makeText(getActivity(), "Please enable storage permision", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Please enable storage permission", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

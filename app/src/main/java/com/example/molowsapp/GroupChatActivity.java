@@ -1,6 +1,7 @@
 package com.example.molowsapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +63,7 @@ public class GroupChatActivity extends AppCompatActivity {
         senBtn = findViewById(R.id.senBtn);
         chatRv = findViewById(R.id.chatRv);
 
-        setSupportActionBar(toolbar); // minuto 59:50 del video 39
+        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
         groupId = intent.getStringExtra("groupId");
@@ -221,4 +222,5 @@ public class GroupChatActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
