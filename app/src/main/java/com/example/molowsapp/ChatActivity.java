@@ -1,30 +1,17 @@
 package com.example.molowsapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,22 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.molowsapp.adapters.AdapterChat;
-import com.example.molowsapp.adapters.AdapterUsers;
 import com.example.molowsapp.models.ModelChat;
 import com.example.molowsapp.models.ModelUser;
-import com.example.molowsapp.notifications.Data;
-import com.example.molowsapp.notifications.Sender;
-import com.example.molowsapp.notifications.Token;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,29 +36,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
     RecyclerView recyclerView;
     CircleImageView profileIv;
     ImageView blockIv;
@@ -105,10 +73,6 @@ public class ChatActivity extends AppCompatActivity {
 
     boolean isBlocked = false;
 
-    private RequestQueue requestQueue;
-
-    private boolean notify = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,8 +88,6 @@ public class ChatActivity extends AppCompatActivity {
         messageEt = findViewById(R.id.messageEt);
         sendBtn = findViewById(R.id.sendBtn);
         blockIv = findViewById(R.id.blockIv);
-
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -185,7 +147,6 @@ public class ChatActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notify = true;
                 String message = messageEt.getText().toString().trim();
                 if (TextUtils.isEmpty(message)){
                     Toast.makeText(ChatActivity.this, "Cannot send the empty message...", Toast.LENGTH_SHORT).show();
@@ -242,7 +203,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void checkIsBlocked() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Usuarios");
-        ref.child(firebaseAuth.getUid()).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
+        ref.child(Objects.requireNonNull(firebaseAuth.getUid())).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -325,6 +286,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     ModelChat chat = ds.getValue(ModelChat.class);
+                    assert chat != null;
                     if (chat.getRecibido().equals(myUid) && chat.getEnviado().equals(hisUid)){
                         HashMap<String, Object> hasSeenHashMap = new HashMap<>();
                         hasSeenHashMap.put("isSeen", true);
@@ -350,6 +312,7 @@ public class ChatActivity extends AppCompatActivity {
                 chatList.clear();
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
                     ModelChat chat = ds.getValue(ModelChat.class);
+                    assert chat != null;
                     if (chat.getRecibido().equals(myUid) && chat.getEnviado().equals(hisUid) ||
                             chat.getRecibido().equals(hisUid) && chat.getEnviado().equals(myUid)){
                         chatList.add(chat);
@@ -387,10 +350,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ModelUser user = snapshot.getValue(ModelUser.class);
 
-                if (notify){
-                    sendNotification(hisUid, user.getNombre(), message);
-                }
-                notify = false;
             }
 
             @Override
@@ -436,58 +395,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void sendNotification(String hisUid, String nombre, String message){
-
-        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = allTokens.orderByKey().equalTo(hisUid);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()){
-                    Token token = ds.getValue(Token.class);
-                    Data data = new Data(myUid, nombre+": "+message, "New Message", hisUid, R.drawable.ic_default_img);
-
-                    Sender sender = new Sender(data, token.getToken());
-
-                    try{
-                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
-                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
-                                    }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
-                            }
-                        }){
-                            @Nullable
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> headers = new HashMap<>();
-                                headers.put("Content-Type", "application/json");
-                                headers.put("Authorization", "key=AAAAMAlP890:APA91bHpcHuYvztIGhRCNsiXINywLw3sPK7pDH9BEvuAsqVx-EM1mMESCve-uGrXMmEPZHUp1fisw0c5_vNCh6hFbmrRpYK6trYJeUA_2895xSfKVLcIYw10XVttZd-_IC2GQ08ijbeU");
-
-                                return headers;
-                            }
-                        };
-
-                        requestQueue.add(jsonObjectRequest);
-                    }catch (JSONException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
 
     private void checkUserStatus(){
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -544,6 +451,8 @@ public class ChatActivity extends AppCompatActivity {
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }

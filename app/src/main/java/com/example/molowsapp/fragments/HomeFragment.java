@@ -141,8 +141,7 @@ public class HomeFragment extends Fragment {
         menu.findItem(R.id.action_logout).setVisible(false);
         menu.findItem(R.id.action_add_participant_group).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
-
-
+        menu.findItem(R.id.action_search).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);

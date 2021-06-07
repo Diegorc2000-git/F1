@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.molowsapp.adapters.AdapterChat;
 import com.example.molowsapp.adapters.AdapterUsers;
 import com.example.molowsapp.models.ModelUser;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PostLikedByActivity extends AppCompatActivity {
 
@@ -30,21 +30,20 @@ public class PostLikedByActivity extends AppCompatActivity {
     private List<ModelUser> userList;
     private AdapterUsers adapterUsers;
 
-    private FirebaseAuth firebaseAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_liked_by);
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Post liked by");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-        actionBar.setSubtitle(firebaseAuth.getCurrentUser().getEmail());
+        actionBar.setSubtitle(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
 
         recyclerViewp = findViewById(R.id.recyclerViewp);
 

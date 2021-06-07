@@ -1,7 +1,6 @@
 package com.example.molowsapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,11 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.molowsapp.adapters.AdapterGroupChat;
-import com.example.molowsapp.adapters.AdapterGroupChatList;
 import com.example.molowsapp.models.ModelGroupChat;
-import com.example.molowsapp.notifications.Data;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,9 +35,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private String groupId, myGroupRole="";
 
-    private Toolbar toolbar;
     private ImageView groupeIconIv;
-    private ImageButton senBtn;
     private TextView groupeTitleTv;
     private EditText messageEt;
     private RecyclerView chatRv;
@@ -56,11 +48,11 @@ public class GroupChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat);
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         groupeIconIv = findViewById(R.id.groupeIconIv);
         groupeTitleTv = findViewById(R.id.groupeTitleTv);
         messageEt = findViewById(R.id.messageEt);
-        senBtn = findViewById(R.id.senBtn);
+        ImageButton senBtn = findViewById(R.id.senBtn);
         chatRv = findViewById(R.id.chatRv);
 
         setSupportActionBar(toolbar);
@@ -74,15 +66,12 @@ public class GroupChatActivity extends AppCompatActivity {
         loadMyGroupRole();
 
 
-        senBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = messageEt.getText().toString().trim();
-                if (TextUtils.isEmpty(message)){
-                    Toast.makeText(GroupChatActivity.this, "Can't send empty message...", Toast.LENGTH_SHORT).show();
-                }else{
-                    sendMessage(message);
-                }
+        senBtn.setOnClickListener(v -> {
+            String message = messageEt.getText().toString().trim();
+            if (TextUtils.isEmpty(message)){
+                Toast.makeText(GroupChatActivity.this, "Can't send empty message...", Toast.LENGTH_SHORT).show();
+            }else{
+                sendMessage(message);
             }
         });
 
@@ -145,18 +134,8 @@ public class GroupChatActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
         ref.child(groupId).child("Messages").child(timestamp)
                 .setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        messageEt.setText("");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnSuccessListener(unused -> messageEt.setText(""))
+                .addOnFailureListener(e -> Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show());
 
     }
 
@@ -168,10 +147,10 @@ public class GroupChatActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             String groupTitle = ""+ds.child("groupTitle").getValue();
-                            String groupDescription = ""+ds.child("groupDescription").getValue();
+                            //String groupDescription = ""+ds.child("groupDescription").getValue();
                             String groupIcon = ""+ds.child("groupIcon").getValue();
-                            String timestamp = ""+ds.child("timestamp").getValue();
-                            String createdBy = ""+ds.child("createdBy").getValue();
+                            //String timestamp = ""+ds.child("timestamp").getValue();
+                            //String createdBy = ""+ds.child("createdBy").getValue();
 
                             groupeTitleTv.setText(groupTitle);
                             try{
@@ -198,13 +177,9 @@ public class GroupChatActivity extends AppCompatActivity {
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(false);
 
-        if (myGroupRole.equals("creator") || myGroupRole.equals("admin")){
-            menu.findItem(R.id.action_add_participant_group).setVisible(true);
-        }
-        else{
-            menu.findItem(R.id.action_add_participant_group).setVisible(false);
-        }
+        menu.findItem(R.id.action_add_participant_group).setVisible(myGroupRole.equals("creator") || myGroupRole.equals("admin"));
         return super.onCreateOptionsMenu(menu);
+
     }
 
     @Override

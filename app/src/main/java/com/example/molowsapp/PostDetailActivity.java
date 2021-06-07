@@ -31,10 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.molowsapp.adapters.AdapterComments;
-import com.example.molowsapp.adapters.AdapterPosts;
 import com.example.molowsapp.models.ModelComment;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -66,7 +63,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
     ImageView uPictureIv, pImageIv;
     TextView uNameTv, pTimeTiv, pTitleTv, pDescriptionTv, pLikeTv, pCommentsTv;
-    ImageButton moreBtn;
     Button likeBtn, shareBtn;
     LinearLayout profileLayout;
     RecyclerView recyclerView;
@@ -84,6 +80,7 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Post Detail");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -99,7 +96,6 @@ public class PostDetailActivity extends AppCompatActivity {
         pDescriptionTv = findViewById(R.id.pDescriptionTv);
         pLikeTv = findViewById(R.id.pLikesTv);
         pCommentsTv = findViewById(R.id.pCommentsTv);
-        moreBtn = findViewById(R.id.moreBtn);
         likeBtn = findViewById(R.id.likeBtn);
         shareBtn = findViewById(R.id.shareBtn);
         profileLayout = findViewById(R.id.profileLayout);
@@ -122,52 +118,28 @@ public class PostDetailActivity extends AppCompatActivity {
 
         loadComments();
 
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postComment();
+        sendBtn.setOnClickListener(v -> postComment());
+
+        likeBtn.setOnClickListener(v -> likePost());
+
+        shareBtn.setOnClickListener(v -> {
+            String pTitle = pTitleTv.getText().toString().trim();
+            String pDescription = pDescriptionTv.getText().toString().trim();
+
+            BitmapDrawable bitmapDrawable = (BitmapDrawable)pImageIv.getDrawable();
+            if (bitmapDrawable == null){
+                shareTextOnly(pTitle, pDescription);
+            }
+            else{
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+                shareImageAndText(pTitle, pDescription, bitmap);
             }
         });
 
-        likeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                likePost();
-            }
-        });
-
-        moreBtn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onClick(View v) {
-                showMoreOptions();
-            }
-        });
-
-        shareBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String pTitle = pTitleTv.getText().toString().trim();
-                String pDescription = pDescriptionTv.getText().toString().trim();
-
-                BitmapDrawable bitmapDrawable = (BitmapDrawable)pImageIv.getDrawable();
-                if (bitmapDrawable == null){
-                    shareTextOnly(pTitle, pDescription);
-                }
-                else{
-                    Bitmap bitmap = bitmapDrawable.getBitmap();
-                    shareImageAndText(pTitle, pDescription, bitmap);
-                }
-            }
-        });
-
-        pLikeTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PostDetailActivity.this, PostLikedByActivity.class);
-                intent.putExtra("postId", postId);
-                startActivity(intent);
-            }
+        pLikeTv.setOnClickListener(v -> {
+            Intent intent1 = new Intent(PostDetailActivity.this, PostLikedByActivity.class);
+            intent1.putExtra("postId", postId);
+            startActivity(intent1);
         });
 
     }
@@ -245,34 +217,31 @@ public class PostDetailActivity extends AppCompatActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    /*@RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void showMoreOptions() {
-        PopupMenu popupMenu = new PopupMenu(this, moreBtn, Gravity.END);
+        PopupMenu popupMenu = new PopupMenu(this, Gravity.END);
 
         if (hisUid.equals(myUid)){
             popupMenu.getMenu().add(Menu.NONE, 0, 0, "Delete");
             popupMenu.getMenu().add(Menu.NONE, 1, 0, "Edit");
 
         }
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                int id = menuItem.getItemId();
-                if (id==0){
-                    beginDelete();
-                }
-                else if (id==1){
-                    Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
-                    intent.putExtra("key", "editPosts");
-                    intent.putExtra("editPostId", postId);
-                    startActivity(intent);
-
-                }
-                return false;
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            int id = menuItem.getItemId();
+            if (id==0){
+                beginDelete();
             }
+            else if (id==1){
+                Intent intent = new Intent(PostDetailActivity.this, AddPostActivity.class);
+                intent.putExtra("key", "editPosts");
+                intent.putExtra("editPostId", postId);
+                startActivity(intent);
+
+            }
+            return false;
         });
         popupMenu.show();
-    }
+    }*/
 
     private void beginDelete() {
         if (pImage.equals("noImage")){
@@ -291,34 +260,28 @@ public class PostDetailActivity extends AppCompatActivity {
 
         StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
         picRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
+                .addOnSuccessListener(unused -> {
 
-                        Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(postId);
-                        fquery.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot ds: snapshot.getChildren()){
-                                    ds.getRef().removeValue();
-                                }
-                                Toast.makeText(PostDetailActivity.this, "Delete successfully", Toast.LENGTH_SHORT).show();
-                                pd.dismiss();
+                    Query fquery = FirebaseDatabase.getInstance().getReference("Posts").orderByChild("pId").equalTo(postId);
+                    fquery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot ds: snapshot.getChildren()){
+                                ds.getRef().removeValue();
                             }
+                            Toast.makeText(PostDetailActivity.this, "Delete successfully", Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        pd.dismiss();
-                        Toast.makeText(PostDetailActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    pd.dismiss();
+                    Toast.makeText(PostDetailActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -420,21 +383,15 @@ public class PostDetailActivity extends AppCompatActivity {
         hashMap.put("uName", myName);
 
         ref.child(timeStamp).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        pd.dismiss();
-                        Toast.makeText(PostDetailActivity.this, "Comment Added...", Toast.LENGTH_SHORT).show();
-                        commentEt.setText("");
-                        updateCommentCount();
-                    }
+                .addOnSuccessListener(unused -> {
+                    pd.dismiss();
+                    Toast.makeText(PostDetailActivity.this, "Comment Added...", Toast.LENGTH_SHORT).show();
+                    commentEt.setText("");
+                    updateCommentCount();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        pd.dismiss();
-                        Toast.makeText(PostDetailActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    pd.dismiss();
+                    Toast.makeText(PostDetailActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
 
     }

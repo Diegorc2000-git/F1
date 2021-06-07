@@ -5,23 +5,19 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 
 import com.example.molowsapp.GroupCreateActivity;
 import com.example.molowsapp.MainActivity;
 import com.example.molowsapp.R;
-import com.example.molowsapp.adapters.AdapterChat;
 import com.example.molowsapp.adapters.AdapterChatlist;
 import com.example.molowsapp.models.ModelChat;
 import com.example.molowsapp.models.ModelChatlist;

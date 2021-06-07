@@ -82,14 +82,14 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
-        String uid = postList.get(i).getUid();
+        final String uid = postList.get(i).getUid();
         String uEmail = postList.get(i).getuEmail();
         String uName = postList.get(i).getuName();
         String uDp = postList.get(i).getuDp();
-        String pId = postList.get(i).getpId();
+        final String pId = postList.get(i).getpId();
         String pTitle = postList.get(i).getpTitle();
         String pDescription = postList.get(i).getpDescr();
-        String pImage = postList.get(i).getpImage();
+        final String pImage = postList.get(i).getpImage();
         String pTimeStamp = postList.get(i).getpTime();
         String pLikes = postList.get(i).getpLikes();
         String pComments = postList.get(i).getpComments();
@@ -276,10 +276,10 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
 
         if (uid.equals(myUid)){
             popupMenu.getMenu().add(Menu.NONE, 0, 0, "Delete");
-            popupMenu.getMenu().add(Menu.NONE, 1, 0, "Edit");
+            //popupMenu.getMenu().add(Menu.NONE, 1, 0, "Edit");
 
         }
-        popupMenu.getMenu().add(Menu.NONE, 2, 0, "View Detail");
+        popupMenu.getMenu().add(Menu.NONE, 1, 0, "View Detail");
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -288,14 +288,14 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder>{
                 if (id==0){
                     beginDelete(pId, pImage);
                 }
-                else if (id==1){
+                /*else if (id==1){
                     Intent intent = new Intent(context, AddPostActivity.class);
                     intent.putExtra("key", "editPosts");
                     intent.putExtra("editPostId", pId);
                     context.startActivity(intent);
 
-                }
-                else if (id == 2){
+                }*/
+                else if (id == 1){
                     Intent intent = new Intent(context, PostDetailActivity.class);
                     intent.putExtra("postId", pId);
                     context.startActivity(intent);

@@ -46,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -80,6 +81,7 @@ public class AddPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_post);
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Add New Post");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -228,9 +230,9 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful());
+                        while(!uriTask.isSuccessful());
 
-                        String dowloadUri = uriTask.getResult().toString();
+                        String dowloadUri = Objects.requireNonNull(uriTask.getResult()).toString(); //
                         if (uriTask.isSuccessful()){
 
                             HashMap<String, Object> hashMap = new HashMap<>();
@@ -292,9 +294,9 @@ public class AddPostActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                                        while (!uriTask.isSuccessful());
+                                        while(!uriTask.isSuccessful());
 
-                                        String dowloadUri = uriTask.getResult().toString();
+                                        String dowloadUri = Objects.requireNonNull(uriTask.getResult()).toString();
                                         if (uriTask.isSuccessful()){
 
                                             HashMap<String, Object> hashMap = new HashMap<>();
@@ -496,14 +498,6 @@ public class AddPostActivity extends AppCompatActivity {
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               /* if (which == 0){
-                    if (!checksCameraPermission()) {
-                        requestCameraPermission();
-                    }
-                    else{
-                        pickFromCamera();
-                    }
-                }*/
                 if (which == 0){
                     if (!checksStoragePermission()) {
                         requestStoragePermission();
@@ -532,22 +526,13 @@ public class AddPostActivity extends AppCompatActivity {
 
         Intent intent = new Intent();
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        //startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
     private boolean checksStoragePermission(){
         boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
         boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return result && result1;
-    }
-
-    private void requestCameraPermission(){
-        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
-    private boolean checksCameraPermission(){
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result;
     }
 
     private void requestStoragePermission(){
@@ -592,6 +577,8 @@ public class AddPostActivity extends AppCompatActivity {
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_add_participant_group).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -603,8 +590,6 @@ public class AddPostActivity extends AppCompatActivity {
             firebaseAuth.signOut();
             checkUserStatus();
         }
-
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -625,9 +610,6 @@ public class AddPostActivity extends AppCompatActivity {
                         Toast.makeText(this, "Camera & Storage both permissions are neccessary..", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else{
-
-                }
             }
             break;
             case STORAGE_REQUEST_CODE:{
@@ -640,9 +622,6 @@ public class AddPostActivity extends AppCompatActivity {
                         Toast.makeText(this, "Storage permissions neccessary", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else{
-
-                }
             }
             break;
         }
@@ -653,6 +632,7 @@ public class AddPostActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK){
 
             if (requestCode == IMAGE_PICK_GALLERY_CODE){
+                assert data != null;
                 image_uri = data.getData();
 
                 imageIv.setImageURI(image_uri);

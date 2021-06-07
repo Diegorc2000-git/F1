@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -54,6 +53,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_there_profile);
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Profile");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -160,6 +160,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                     ModelPost myPosts = ds.getValue(ModelPost.class);
 
 
+                    assert myPosts != null;
                     if (myPosts.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
                             myPosts.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
 

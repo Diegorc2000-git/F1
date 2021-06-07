@@ -1,18 +1,15 @@
 package com.example.molowsapp;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,11 +22,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -58,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Login");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -76,41 +71,27 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.loginBtn);
         mGoogleLoginBtn = findViewById(R.id.googleLoginBtn);
 
-        mLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = mEmailEt.getText().toString();
-                String passw = mPasswordEt.getText().toString().trim();
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-                    mEmailEt.setError("Invalid Email");
-                    mEmailEt.setFocusable(true);
-                }
-                else{
-                    loginUser(email, passw);
-                }
+        mLoginBtn.setOnClickListener(v -> {
+            String email = mEmailEt.getText().toString();
+            String passw = mPasswordEt.getText().toString().trim();
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                mEmailEt.setError("Invalid Email");
+                mEmailEt.setFocusable(true);
+            }
+            else{
+                loginUser(email, passw);
             }
         });
 
-        notHaveAccntTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-                finish();
-            }
+        notHaveAccntTv.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            finish();
         });
-        mRecoverPassTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRecoverPasswordDialog();
-            }
-        });
+        mRecoverPassTv.setOnClickListener(v -> showRecoverPasswordDialog());
 
-        mGoogleLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
+        mGoogleLoginBtn.setOnClickListener(v -> {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
         });
 
         pd = new ProgressDialog(this);
@@ -132,19 +113,11 @@ public class LoginActivity extends AppCompatActivity {
 
         builder.setView(linearLayout);
 
-        builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String email = emailEt.getText().toString().trim();
-                beginRecovery(email);
-            }
+        builder.setPositiveButton("Recover", (dialog, which) -> {
+            String email = emailEt.getText().toString().trim();
+            beginRecovery(email);
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
         builder.create().show();
     }
@@ -153,50 +126,38 @@ public class LoginActivity extends AppCompatActivity {
         pd.setMessage("Sending email...");
         pd.show();
         mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                pd.dismiss();
-                if (task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(LoginActivity.this, "Failed...", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                .addOnCompleteListener(task -> {
+                    pd.dismiss();
+                    if (task.isSuccessful()){
+                        Toast.makeText(LoginActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(LoginActivity.this, "Failed...", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(e -> {
+                    pd.dismiss();
+                    Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void loginUser(String email, String passw) {
         pd.setMessage("Loggin in...");
         pd.show();
         mAuth.signInWithEmailAndPassword(email, passw)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            pd.show();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                            finish();
-                        } else {
-                            pd.show();
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        pd.show();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        pd.show();
+                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.show();
-                Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                }).addOnFailureListener(e -> {
+                    pd.show();
+                    Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
 
     }
 
@@ -226,41 +187,33 @@ public class LoginActivity extends AppCompatActivity {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                        FirebaseUser user = mAuth.getCurrentUser();
 
-                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
-                                String email = user.getEmail();
-                                String uid = user.getUid();
-                                HashMap<Object, String> hashMap = new HashMap<>();
-                                hashMap.put("email", email);
-                                hashMap.put("uid", uid);
-                                hashMap.put("nombre", "");
-                                hashMap.put("onlineStatus", "online");
-                                hashMap.put("typingTo", "noOne");
-                                hashMap.put("telefono", "");
-                                hashMap.put("imagen", "");
-                                hashMap.put("cover", "");
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference reference = database.getReference("Usuarios");
-                                reference.child(uid).setValue(hashMap);
-                            }
-                            Toast.makeText(LoginActivity.this, ""+user.getEmail(), Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                            String email = user.getEmail();
+                            String uid = user.getUid();
+                            HashMap<Object, String> hashMap = new HashMap<>();
+                            hashMap.put("email", email);
+                            hashMap.put("uid", uid);
+                            hashMap.put("nombre", "");
+                            hashMap.put("onlineStatus", "online");
+                            hashMap.put("typingTo", "noOne");
+                            hashMap.put("telefono", "");
+                            hashMap.put("imagen", "");
+                            hashMap.put("cover", "");
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference reference = database.getReference("Usuarios");
+                            reference.child(uid).setValue(hashMap);
                         }
+                        Toast.makeText(LoginActivity.this, ""+user.getEmail(), Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                }).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

@@ -46,7 +46,6 @@ public class UsersFragment extends Fragment {
     public UsersFragment() {
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -86,7 +86,6 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
         return usersList.size();
     }
 
-
     class MyHolder extends RecyclerView.ViewHolder{
         ImageView profileIv, onlineStatusIv;
         TextView nameTv, lastMessageTv;

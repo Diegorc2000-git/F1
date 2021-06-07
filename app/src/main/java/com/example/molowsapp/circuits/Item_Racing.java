@@ -4,11 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Item_Racing implements Parcelable {
-    private String fecha;
-    private int idImagenRacing;
-    private String titulo;
-    private  String pais;
-    private String descripcion;
+    private final String fecha;
+    private final int idImagenRacing;
+    private final String titulo;
+    private final String pais;
+    private final String descripcion;
 
     public Item_Racing(String fecha, int idImagenRacing, String titulo, String pais, String descripcion) {
         this.fecha = fecha;

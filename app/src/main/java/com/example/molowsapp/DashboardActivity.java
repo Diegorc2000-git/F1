@@ -8,17 +8,12 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.PopupMenu;
 
-import com.example.molowsapp.fragments.ChatListFragment;
 import com.example.molowsapp.fragments.GroupChatsFragment;
 import com.example.molowsapp.fragments.HomeFragment;
 import com.example.molowsapp.fragments.ProfileFragment;
 import com.example.molowsapp.fragments.UsersFragment;
-import com.example.molowsapp.notifications.Token;
 import com.example.molowsapp.teams.CochesActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,18 +29,18 @@ public class DashboardActivity extends AppCompatActivity {
 
     String mUID;
 
-    private BottomNavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Profile");
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        navigationView = findViewById(R.id.navigation);
+        BottomNavigationView navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
 
         actionBar.setTitle("Home");
@@ -56,7 +51,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         checkUserStatus();
 
-
     }
 
     @Override
@@ -65,13 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void updateToken(String token){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token mToken = new Token(token);
-        ref.child(mUID).setValue(mToken);
-    }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
+    private final BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -153,8 +141,6 @@ public class DashboardActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("Current_USERID", mUID);
             editor.apply();
-
-            //updateToken(FirebaseInstanceId.getInstance().getToken());
         }
         else{
             startActivity(new Intent(DashboardActivity.this, MainActivity.class));

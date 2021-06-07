@@ -11,20 +11,16 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,11 +43,8 @@ import java.util.Locale;
 public class GroupEditActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
-    private static final int IMAGE_PICK_GALLERY_CODE = 400;
     private String[] cameraPermissions;
-    private String[] storagePermissions;
     private Uri image_uri = null;
 
     private ActionBar actionBar;
@@ -60,7 +53,6 @@ public class GroupEditActivity extends AppCompatActivity {
 
     private ImageView groupIconIv;
     private EditText groupTitleEt, groupDescriptionEt;
-    private FloatingActionButton updateGroupBtn;
 
     private ProgressDialog progressDialog;
 
@@ -72,6 +64,7 @@ public class GroupEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_edit);
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Edit Group");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -79,7 +72,7 @@ public class GroupEditActivity extends AppCompatActivity {
         groupIconIv = findViewById(R.id.groupIconIv);
         groupTitleEt = findViewById(R.id.groupTitleEt);
         groupDescriptionEt = findViewById(R.id.groupDescriptionEt);
-        updateGroupBtn = findViewById(R.id.updateGroupBtn);
+        FloatingActionButton updateGroupBtn = findViewById(R.id.updateGroupBtn);
 
         groupId = getIntent().getStringExtra("groupId");
 
@@ -88,25 +81,14 @@ public class GroupEditActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
         loadGroupInfo();
 
-        groupIconIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImgaePickDialog();
-            }
-        });
+        groupIconIv.setOnClickListener(v -> showImgaePickDialog());
 
-        updateGroupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startUpdatingGroup();
-            }
-        });
+        updateGroupBtn.setOnClickListener(v -> startUpdatingGroup());
 
     }
 
@@ -131,19 +113,13 @@ public class GroupEditActivity extends AppCompatActivity {
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
             ref.child(groupId).updateChildren(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            progressDialog.dismiss();
-                            Toast.makeText(GroupEditActivity.this, "Group info updated...", Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(unused -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(GroupEditActivity.this, "Group info updated...", Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         }
         else{
@@ -152,44 +128,32 @@ public class GroupEditActivity extends AppCompatActivity {
             String filePathAndName= "Group_Imgs/"+"image"+"_"+timestamp;
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
             storageReference.putFile(image_uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Task<Uri> p_uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!p_uriTask.isSuccessful());
-                            Uri p_downloadUri = p_uriTask.getResult();
-                            if (p_uriTask.isSuccessful()){
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Task<Uri> p_uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!p_uriTask.isSuccessful());
+                        Uri p_downloadUri = p_uriTask.getResult();
+                        if (p_uriTask.isSuccessful()){
 
-                                HashMap<String, Object> hashMap = new HashMap<>();
-                                hashMap.put("groupTitle", groupTitle);
-                                hashMap.put("groupDescription", groupDescription);
-                                hashMap.put("groupIcon", ""+p_downloadUri);
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("groupTitle", groupTitle);
+                            hashMap.put("groupDescription", groupDescription);
+                            hashMap.put("groupIcon", ""+p_downloadUri);
 
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
-                                ref.child(groupId).updateChildren(hashMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                progressDialog.dismiss();
-                                                Toast.makeText(GroupEditActivity.this, "Group info updated...", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                progressDialog.dismiss();
-                                                Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                            }
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+                            ref.child(groupId).updateChildren(hashMap)
+                                    .addOnSuccessListener(unused -> {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(GroupEditActivity.this, "Group info updated...", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
                         }
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(GroupEditActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
 
         }
@@ -201,17 +165,17 @@ public class GroupEditActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    String groupId = ""+ds.child("groupId").getValue();
+                    //String groupId = ""+ds.child("groupId").getValue();
                     String groupTitle = ""+ds.child("groupTitle").getValue();
                     String groupDescription = ""+ds.child("groupDescription").getValue();
                     String groupIcon = ""+ds.child("groupIcon").getValue();
-                    String createdBy = ""+ds.child("createdBy").getValue();
+                    //String createdBy = ""+ds.child("createdBy").getValue();
                     String timestamp = ""+ds.child("timestamp").getValue();
 
                     //convert dateTime to dd/MM/yyyy hh:mm am/pm
                     Calendar cal = Calendar.getInstance(Locale.ENGLISH);
                     cal.setTimeInMillis(Long.parseLong(timestamp));
-                    String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
+                    //String dateTime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
 
                     groupTitleEt.setText(groupTitle);
                     groupDescriptionEt.setText(groupDescription);
@@ -233,36 +197,19 @@ public class GroupEditActivity extends AppCompatActivity {
     }
 
     private void showImgaePickDialog() {
-        String[] options = {"Camera", "Gallery"};
+        String[] options = {"Camera"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Image:")
-                .setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0){
-                            if (!checkCameraPermissions()){
-                                requestCameraPermissions();
-                            }
-                            else{
-                                pickFromCamera();
-                            }
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0){
+                        if (!checkCameraPermissions()){
+                            requestCameraPermissions();
                         }
                         else{
-                            if (!checkStoragePermissins()){
-                                requestStoragePermissions();
-                            }
-                            else{
-                                pickFromGallery();
-                            }
+                            pickFromCamera();
                         }
                     }
                 }).show();
-    }
-
-    private void pickFromGallery(){
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
     private void pickFromCamera(){
@@ -274,16 +221,6 @@ public class GroupEditActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
-    }
-
-    private boolean checkStoragePermissins(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-
-    private void requestStoragePermissions(){
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
     }
 
     private boolean checkCameraPermissions(){
@@ -323,22 +260,11 @@ public class GroupEditActivity extends AppCompatActivity {
                         pickFromCamera();
                     }
                     else{
-                        Toast.makeText(this, "Camera & Storage permissions are required", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Camera permissions are required", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
             break;
-            case STORAGE_REQUEST_CODE:{
-                if (grantResults.length > 0){
-                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (storageAccepted){
-                        pickFromGallery();
-                    }
-                    else{
-                        Toast.makeText(this, "Storage permissions required", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -346,11 +272,7 @@ public class GroupEditActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == RESULT_OK){
-            if (requestCode == IMAGE_PICK_GALLERY_CODE){
-                image_uri = data.getData();
-                groupIconIv.setImageURI(image_uri);
-            }
-            else if (requestCode == IMAGE_PICK_CAMERA_CODE){
+            if (requestCode == IMAGE_PICK_CAMERA_CODE){
                 groupIconIv.setImageURI(image_uri);
             }
         }

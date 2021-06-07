@@ -12,14 +12,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -28,7 +26,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebStorage;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -270,13 +267,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private void showEditProfileDialog() {
-        String options[] = { "Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone", "Change Password"};
+        String options[] = { "Edit Name", "Edit Phone", "Change Password"};  /*"Edit Profile Picture", "Edit Cover Photo",*/
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Action");
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0){
+                /*if (which == 0){
                     pd.setMessage("Update Profile Picture");
                     profileOrCoverPhoto = "imagen";
                     showImagePicDialog();
@@ -285,13 +282,14 @@ public class ProfileFragment extends Fragment {
                     pd.setMessage("Update Cover Photo");
                     profileOrCoverPhoto = "cover";
                     showImagePicDialog();
-                } else if (which == 2){
+                } else*/
+                if (which == 0){
                     pd.setMessage("Update Name");
                     showNamePhoneUpdateDialog("nombre");
-                } else if (which == 3){
+                } else if (which == 1){
                     pd.setMessage("Update Phone");
                     showNamePhoneUpdateDialog("telefono");
-                }else if (which == 4){
+                }else if (which == 2){
                     pd.setMessage("Changing Password");
                     showChangePasswordDialog();
                 }

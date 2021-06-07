@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GroupParticipantAddActivity extends AppCompatActivity {
 
@@ -38,6 +39,7 @@ public class GroupParticipantAddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_participant_add);
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Add Participants");
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -61,7 +63,8 @@ public class GroupParticipantAddActivity extends AppCompatActivity {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     ModelUser modelUser = ds.getValue(ModelUser.class);
 
-                    if (!firebaseAuth.getUid().equals(modelUser.getUid())){
+                    assert modelUser != null;
+                    if (!Objects.equals(firebaseAuth.getUid(), modelUser.getUid())){
                         userList.add(modelUser);
                     }
                 }

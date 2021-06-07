@@ -60,10 +60,10 @@ public class AdapterGroupChatList extends RecyclerView.Adapter<AdapterGroupChatL
 
         holder.groupTitleTv.setText(groupeTitle);
         try{
-            Picasso.get().load(groupIcon).placeholder(R.drawable.ic_group_primary).into(holder.groupIconIv);
+            Picasso.get().load(groupIcon).placeholder(R.drawable.ic_default_img).into(holder.groupIconIv);
         }
         catch (Exception e){
-            holder.groupIconIv.setImageResource(R.drawable.ic_group_primary);
+            holder.groupIconIv.setImageResource(R.drawable.ic_default_img);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
